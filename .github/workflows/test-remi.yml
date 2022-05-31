@@ -1,0 +1,14 @@
+name: Test Rémi
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  foo:
+    runs-on: test-remi
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: echo "Hello world!"
