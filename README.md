@@ -5,8 +5,7 @@ The goal of this project is to have a pool of Mirego hosted runners in addition 
   - [High Level Overview](#high-level-overview)
   - [Inside a Runner](#inside-a-runner)
 - [Setup the Host](#setup-the-host)
-- [Setup the Guest](#setup-the-guest)
-- [Setup](#setup)
+- [Setup the VM](#setup-the-vm)
 
 ## Architecture
 
@@ -98,9 +97,7 @@ flowchart LR
    - Enable remote access (SSH/Remote Desktop)
    - Disable sleep/screensaver
 
-## Setup the Guest
-
-## Setup
+## Setup the VM
 1. Start the VM in a non-ephemeral mode
    - `./macosvm vm.json -g`
 2. Go through the MacOS initial setup
