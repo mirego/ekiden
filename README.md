@@ -93,7 +93,7 @@ flowchart LR
    - Example command: `./macosvm --disk disk.img,size=64g --aux aux.img -c 8 --restore UniversalMac_Restore.ipsw vm.json`
    - The VM configuration is saved to the specified JSON file.
 4. Download the management script from the repo (TODO: put the script in a repo)
-5. Add the private key to communicate with the VM
+5. Add the ssh key to communicate with the VM
 6. Adjust the machine's system preferences as required
    - Enable remote access (SSH/Remote Desktop)
    - Disable sleep/screensaver
@@ -109,8 +109,9 @@ flowchart LR
 3. Download [the runner](https://github.com/actions/runner/releases)
    - Make sure to download the ARM64 version, otherwise everything will run through Rosetta
 4. Enable remote access (SSH)
-5. Set the hostname for the SSH communication
+5. Set the hostname for the SSH communication to `githubrunnervm`
 6. Add the public key to the allowed list
+   - From the host machine, you can run `ssh-copy-id runner@githubrunnervm.local` to copy the public key to the guest
 7. Enable passwordless `sudo`
 8. Disable sleep/screensaver
 9.  Install Homebrew
