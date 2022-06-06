@@ -1,9 +1,7 @@
 name: Test Rémi
 
 on:
-  push:
-    branches:
-      - 'master'
+  workflow_dispatch:
 
 jobs:
   foo:
