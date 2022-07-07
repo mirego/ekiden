@@ -5,7 +5,7 @@ on:
 
 jobs:
   foo:
-    runs-on: test-remi
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v2

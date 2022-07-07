@@ -6,6 +6,7 @@ The goal of this project is to have a pool of Mirego hosted runners in addition 
   - [Inside a Runner](#inside-a-runner)
 - [Setup the Host](#setup-the-host)
 - [Setup the VM](#setup-the-vm)
+- [Caveats](#caveats)
 
 ## Architecture
 
@@ -91,11 +92,12 @@ flowchart LR
    - The VM should have enough space for all the necessary tools.
    - Example command: `./macosvm --disk disk.img,size=64g --aux aux.img -c 8 --restore UniversalMac_Restore.ipsw vm.json`
    - The VM configuration is saved to the specified JSON file.
-4. Download the management script from the repo (TODO: put the script in a repo)
+4. Download the management script from the repo
+   - Configure the `GITHUB_API_TOKEN` in the script
 5. Add the ssh key to communicate with the VM
 6. Adjust the machine's system preferences as required
    - Enable remote access (SSH/Remote Desktop)
-   - Disable sleep/screensaver
+   - Disable sleep
 
 ## Setup the VM
 1. Start the VM in a non-ephemeral mode
@@ -111,14 +113,25 @@ flowchart LR
    - From the host machine, you can run `ssh-copy-id runner@githubrunnervm.local` to copy the public key to the guest
 7. Enable passwordless `sudo`
 8. Disable sleep/screensaver
-9.  Install Homebrew
+9. Enable passwordless sudo
+10. Install Homebrew
     - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
-10. Install Xcode from the website
+11. Install Xcode from the website
     - Must be downloaded from the [website](https://developer.apple.com/xcode/) as the App Store is currently disabled inside a VM
     - Make sure to start Xcode once to install all the components
-11. Install the Android SDK
-12. Install additionnal tools (TODO: provide an actual list)
-13.  Set the required environment variables
+12. Install the Android SDK
+13. Install additionnal tools from Homebrew
+    -  `jq`
+    -  `curl`
+    -  `firebase-cli`
+    -  `awscli`
+    -  `rbenv` and `rbenv-bundler`
+14. Set the required environment variables
     - Variables can be defined in the `.env` file in the runner folder
-    - `ImageOS` must be set to `macos{VERSION}` (example: `macos12`)
+    - `ImageOS` must be set to `macos{VERSION}` (example: `ImageOS=macos12`)
     - `XCODE_13_DEVELOPER_DIR` must point to Xcode's path
+    - `PATH` should include all the installed binaries (example: `PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/Library/Apple/usr/bin`)
+
+## Caveats
+- GitHub's cache action will not work across different architectures
+- The `ruby/setup-ruby` action will not work as there are not ARM64 binaries provided at the moment. A workaround is to use rbenv.
