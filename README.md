@@ -132,9 +132,17 @@ flowchart LR
     -  `python3`
 14. Set the required environment variables
     - Variables can be defined in the `.env` file in the runner folder
-    - `ImageOS` must be set to `macos{VERSION}` (example: `ImageOS=macos12`)
+    - `ImageOS` must be set to `macos{VERSION}`
     - `XCODE_13_DEVELOPER_DIR` must point to Xcode's path
-    - `PATH` should include all the installed binaries (example: `PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/usr/sbin:/Library/Apple/usr/bin`)
+    - `PATH` should include all the installed binaries
+
+Example `.env` file:
+```
+LANG=en_CA.UTF-8
+ImageOS=macos12
+XCODE_13_DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
+```
 
 ## Caveats
 - GitHub's cache action will not work across different architectures
