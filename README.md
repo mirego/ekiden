@@ -90,7 +90,7 @@ flowchart LR
 2. Download a Mac OS recovery image. The download URL can be found [here](https://ipsw.me/).
 3. Create the VM
    - The VM should have enough space for all the necessary tools.
-   - Example command: `./macosvm --disk disk.img,size=64g --aux aux.img -c 8 --restore UniversalMac_Restore.ipsw vm.json`
+   - Example command: `./macosvm --disk disk.img,size=128g --aux aux.img -c 8 --restore UniversalMac_Restore.ipsw vm.json`
    - The VM configuration is saved to the specified JSON file.
 4. Download the management script from the repo
    - Configure the `GITHUB_API_TOKEN` in the script
@@ -105,15 +105,17 @@ flowchart LR
 2. Go through the MacOS initial setup
    - Username: `runner`
    - Password: `runner`
-3. Download [the runner](https://github.com/actions/runner/releases)
-   - Make sure to download the ARM64 version, otherwise everything will run through Rosetta
-4. Enable remote access (SSH)
-5. Set the hostname for the SSH communication to `githubrunnervm`
-6. Add the public key to the allowed list
+3. Enable remote access (SSH)
+4. Set the hostname for the SSH communication to `githubrunnervm`
+5. Add the public key to the allowed list
    - From the host machine, you can run `ssh-copy-id runner@githubrunnervm.local` to copy the public key to the guest
-7. Enable passwordless `sudo`
-8. Disable sleep/screensaver
-9. Enable passwordless sudo
+6. Disable automatic updates
+7. Disable sleep
+8. Enable passwordless `sudo`
+   - `sudo visudo`
+   - Edit to have `%admin ALL=(ALL) NOPASSWD: ALL` 
+9. Download [the runner](https://github.com/actions/runner/releases)
+   - Make sure to download the ARM64 version, otherwise everything will run through Rosetta
 10. Install Homebrew
     - `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
 11. Install Xcode from the website
@@ -123,9 +125,11 @@ flowchart LR
 13. Install additionnal tools from Homebrew
     -  `jq`
     -  `curl`
+    -  `wget`
     -  `firebase-cli`
     -  `awscli`
-    -  `rbenv` and `rbenv-bundler`
+    -  `rbenv`, `ruby-build` and `rbenv-bundler`
+    -  `python3`
 14. Set the required environment variables
     - Variables can be defined in the `.env` file in the runner folder
     - `ImageOS` must be set to `macos{VERSION}` (example: `ImageOS=macos12`)

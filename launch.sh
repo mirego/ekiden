@@ -12,7 +12,7 @@ VM_USERNAME=runner
 VM_HOSTNAME=githubrunnervm.local
 VM_RUNNER_PATH=./actions-runner
 
-RUNNER_LABELS=self-hosted,ARM64,M1,mirego
+RUNNER_LABELS=self-hosted,M1,mirego
 RUNNER_URL=https://github.com/mirego
 
 while :
