@@ -99,6 +99,7 @@ flowchart LR
   - Sharing — Enable Remote access (SSH/Remote Desktop)
   - Sharing — Edit machine hostname (`gh-shr-XX`)
   - Energy — Disable sleep
+- Put the screen in sleep mode
 
 ### CLI
 
