@@ -1,4 +1,5 @@
 # GitHub Actions Self-Hosted ARM64 MacOS Runner
+
 The goal of this project is to have a pool of Mirego hosted runners in addition to the runners provided by GitHub. Those runners will be executed inside an ARM64 MacOS machine which should help speed up iOS builds.
 
 - [Architecture](#architecture)
@@ -11,6 +12,7 @@ The goal of this project is to have a pool of Mirego hosted runners in addition 
 ## Architecture
 
 ### High Level Overview
+
 Mirego will have a few machines hosted on premise. Those machines will be able to pick up jobs just like the GitHub hosted machines. The self-hosted runners will include tags in order to be explicitely chosen inside the workflows (`self-hosted`, `ARM64`, `mirego`...).
 
 ```mermaid
@@ -40,17 +42,19 @@ flowchart TD
 ```
 
 ### Inside a Runner
+
 In order to simplify maintenance and to increase the runner's reliability and the build's repeatability, each runner will run inside an ephemeral VM. This way, whenever a runner picks up a job, the workspace is assured to be in a clean state. This will also allow us to install and upgrade tools inside the VM and replicate it to every other machines.
 
 A typical run-loop looks like this:
-1. The *host* machine generates a token from the GitHub API.
-2. The *host* machine launches a virtual machine (*guest*) with a cloned virtual disk.
-3. The *host* machine initiates an SSH connection to the *guest* using a pre-defined hostname.
-4. The *host* machine launches the "runner" software pre-installed on the VM using the generated token.
-5. The *guest* machine waits for a job and executes it.
-6. The *guest* machine de-registers the runner from the GitHub organisation.
-7. The *host* machine shuts down the VM
-8. The *host* machine deletes the cloned virtual disk
+
+1. The _host_ machine generates a token from the GitHub API.
+2. The _host_ machine launches a virtual machine (_guest_) with a cloned virtual disk.
+3. The _host_ machine initiates an SSH connection to the _guest_ using a pre-defined hostname.
+4. The _host_ machine launches the "runner" software pre-installed on the VM using the generated token.
+5. The _guest_ machine waits for a job and executes it.
+6. The _guest_ machine de-registers the runner from the GitHub organisation.
+7. The _host_ machine shuts down the VM
+8. The _host_ machine deletes the cloned virtual disk
 9. Repeat
 
 ```mermaid
@@ -85,6 +89,7 @@ flowchart LR
 ```
 
 ## Setup the Host
+
 1. Install [macosvm](https://github.com/s-u/macosvm)
    - This is a small wrapper around Apple's [virtualization framework](https://developer.apple.com/documentation/virtualization). It allows us to create, start and manage the virtual machine. It also comes with a handy "ephemeral" mode which automatically creates a clone of the virtual disk on start and deletes it on shut down
 2. Download a Mac OS recovery image. The download URL can be found [here](https://ipsw.me/).
@@ -100,6 +105,7 @@ flowchart LR
    - Disable sleep
 
 ## Setup the VM
+
 1. Start the VM in a non-ephemeral mode
    - `./macosvm vm.json -g`
 2. Go through the MacOS initial setup
@@ -113,7 +119,7 @@ flowchart LR
 7. Disable sleep
 8. Enable passwordless `sudo`
    - `sudo visudo`
-   - Edit to have `%admin ALL=(ALL) NOPASSWD: ALL` 
+   - Edit to have `%admin ALL=(ALL) NOPASSWD: ALL`
 9. Download [the runner](https://github.com/actions/runner/releases)
    - Make sure to download the ARM64 version, otherwise everything will run through Rosetta
 10. Install Homebrew
@@ -123,13 +129,13 @@ flowchart LR
     - Make sure to start Xcode once to install all the components
 12. Install the Android SDK
 13. Install additionnal tools from Homebrew
-    -  `jq`
-    -  `curl`
-    -  `wget`
-    -  `firebase-cli`
-    -  `awscli`
-    -  `rbenv`, `ruby-build` and `rbenv-bundler`
-    -  `python3`
+    - `jq`
+    - `curl`
+    - `wget`
+    - `firebase-cli`
+    - `awscli`
+    - `rbenv`, `ruby-build` and `rbenv-bundler`
+    - `python3`
 14. Set the required environment variables
     - Variables can be defined in the `.env` file in the runner folder
     - `ImageOS` must be set to `macos{VERSION}`
@@ -137,6 +143,7 @@ flowchart LR
     - `PATH` should include all the installed binaries
 
 Example `.env` file:
+
 ```
 LANG=en_CA.UTF-8
 ImageOS=macos12
@@ -145,5 +152,6 @@ PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin
 ```
 
 ## Caveats
+
 - GitHub's cache action will not work across different architectures
 - The `ruby/setup-ruby` action will not work as there are not ARM64 binaries provided at the moment. A workaround is to use rbenv.
