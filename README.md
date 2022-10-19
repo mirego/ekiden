@@ -103,15 +103,14 @@ flowchart LR
 
 ### CLI
 
-- Log in to the machine via SSH (using password credentials for now)
+- From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to the machine
 
   ```
-  $ ssh admin@<HOST_IP>
-  > mkdir .ssh
-  > vim .ssh/authorized_keys # And insert your public SSH key
+  # You’ll be prompted for admin’s password just this one time
+  $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
   ```
 
-- From your local machine, copy a few files from this repository
+- Still from your local machine, copy a few files from this repository
 
   ```
   $ scp .zshrc admin@<HOST_IP>
