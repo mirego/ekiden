@@ -90,19 +90,95 @@ flowchart LR
 
 ## Setup the Host
 
-1. Install [macosvm](https://github.com/s-u/macosvm)
-   - This is a small wrapper around Apple's [virtualization framework](https://developer.apple.com/documentation/virtualization). It allows us to create, start and manage the virtual machine. It also comes with a handy "ephemeral" mode which automatically creates a clone of the virtual disk on start and deletes it on shut down
-2. Download a Mac OS recovery image. The download URL can be found [here](https://ipsw.me/).
-3. Create the VM
-   - The VM should have enough space for all the necessary tools.
-   - Example command: `./macosvm --disk disk.img,size=128g --aux aux.img -c 8 --restore UniversalMac_Restore.ipsw vm.json`
-   - The VM configuration is saved to the specified JSON file.
-4. Download the management script from the repo
-   - Configure the `GITHUB_API_TOKEN` in the script
-5. Add the ssh key to communicate with the VM
-6. Adjust the machine's system preferences as required
-   - Enable remote access (SSH/Remote Desktop)
-   - Disable sleep
+### UI
+
+- In the initial macOS setup
+  - Use `admin` as the username for the initial user
+- After the macOS setup, adjust the machine’s preferences:
+  - Sharing — Enable Screen sharing
+  - Sharing — Enable Remote access (SSH/Remote Desktop)
+  - Sharing — Edit machine hostname (`gh-shr-XX`)
+  - Energy — Disable sleep
+- Put the screen in sleep mode
+
+### CLI
+
+- From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to the machine
+
+  ```
+  # You’ll be prompted for admin’s password just this one time
+  $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
+  ```
+
+- Still from your local machine, copy a few files from this repository
+
+  ```
+  $ scp .zshrc admin@<HOST_IP>
+  $ scp .vimrc admin@<HOST_IP>
+  ```
+
+- On the remote machiine, install [Homebrew](https://brew.sh)
+
+  ```
+  $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+
+- Install `tmux` and `wget`
+
+  ```
+  $ brew install tmux wget
+  ```
+
+- Install [macosvm](https://github.com/s-u/macosvm)
+
+  ```
+  $ wget https://github.com/s-u/macosvm/releases/download/0.1-2/macosvm-0.1-2-arm64-darwin21.tar.gz
+  $ tar -xzf macosvm-0.1-2-arm64-darwin21.tar.gz
+  $ mkdir Bin
+  $ mv macosvm Bin
+  $ mkdir vm
+  ```
+
+- Configure the setup
+
+  - From your local machine, copy the launch script into the remote machine’s `vm` directory
+
+    ```
+    $ scp launch.sh admin@<HOST_IP>:vm
+    ```
+
+- Configure the rest of the setup
+  ⚠️ **This part is still a work in progress**
+
+  - Configure the value for `GITHUB_API_TOKEN` in `vm/launch.sh`
+  - Add the private SSH key to communicate with the VM
+  - Fetch the rest of the `vm` directory content from another host machine (using cryptic/fancy `scp` commands)
+
+- Start tmux and launch a new runner!
+
+  ```
+  $ tmux
+  $ cd vm
+  $ ./launch.sh mirego-XX
+  ```
+
+- Detach from tmux with (press `^B`, release and then `d`)
+
+- Logout from the remote machine
+
+  ```
+  $ exit
+  ```
+
+- 🎉
+
+## Create a new VM
+
+- Download a Mac OS recovery image. The download URL can be found [here](https://ipsw.me/).
+- Create the VM
+  - The VM should have enough space for all the necessary tools.
+  - Example command: `./macosvm --disk disk.img,size=128g --aux aux.img -c 8 --restore UniversalMac_Restore.ipsw vm.json`
+  - The VM configuration is saved to the specified JSON file.
 
 ## Setup the VM
 
