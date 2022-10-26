@@ -22,7 +22,7 @@ do
 
   echo "💻 [HOST] Launching macOS VM"
   LOG_FILE=vm_logs_"$RUNNER_NAME"_"$RANDOM"
-  macosvm --ephemeral -g $VM_JSON_FILE > $LOG_FILE 2>&1 & VM_PID=$!
+  macosvm --ephemeral $VM_JSON_FILE > $LOG_FILE 2>&1 & VM_PID=$!
   trap "kill $VM_PID; rm -f $LOG_FILE; exit 1" SIGINT
 
   echo "💤 [HOST] Waiting for VM to boot"
