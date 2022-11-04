@@ -5,12 +5,11 @@ on:
 
 jobs:
   speed:
-    name: Speed
+    name: Speed Test
     runs-on: [self-hosted, macos, arm64]
 
     steps:
-      - name: Speed
-        run: |
+      - run: |
           touch /opt/homebrew/.git/TMP_FETCH_FAILURES
           brew tap teamookla/speedtest
           brew update

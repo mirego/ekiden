@@ -1,4 +1,4 @@
-name: "Upload Large File"
+name: "Upload Artifact (1GB)"
 
 on:
   workflow_dispatch:
