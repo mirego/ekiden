@@ -1,0 +1,22 @@
+name: "Upload Large File"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    name: Upload
+    runs-on: [self-hosted, macos, arm64]
+
+    steps:
+
+      - name: Create Large File
+        run: |
+          openssl rand -out large_file -base64 $(( 2**30 * 3/4 ))
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Large File
+          retention-days: 1
+          path: large_file

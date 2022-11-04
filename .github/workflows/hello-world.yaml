@@ -1,11 +1,11 @@
-name: Test Rémi
+name: Hello World
 
 on:
   workflow_dispatch:
 
 jobs:
-  foo:
-    runs-on: self-hosted
+  hello:
+    runs-on: [self-hosted, macos, arm64]
 
     steps:
       - uses: actions/checkout@v3
