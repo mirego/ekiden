@@ -1,0 +1,18 @@
+name: Traceroute
+
+on:
+  workflow_dispatch:
+
+jobs:
+  traceroute:
+    name: Traceroute
+    runs-on: [self-hosted, macos, arm64]
+
+    steps:
+      - name: Traceroute
+        run: |
+          traceroute google.com > result
+          cat result
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          cat result >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
