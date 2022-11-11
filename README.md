@@ -6,6 +6,9 @@ The goal of this project is to have a pool of Mirego hosted runners in addition 
   - [High Level Overview](#high-level-overview)
   - [Inside a Runner](#inside-a-runner)
 - [Setup the Host](#setup-the-host)
+  - [UI](#ui)
+  - [CLI](#cli)
+- [Create a new VM](#create-a-new-vm)
 - [Setup the VM](#setup-the-vm)
 - [Caveats](#caveats)
 
@@ -223,8 +226,10 @@ Example `.env` file:
 ```
 LANG=en_CA.UTF-8
 ImageOS=macos12
-XCODE_13_DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
-PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin
+XCODE_13_DEVELOPER_DIR=/Applications/Xcode-13.app/Contents/Developer
+XCODE_14_DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+ANDROID_HOME=/Users/$USER/Library/Android/sdk
+PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Library/Apple/usr/bin:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 ```
 
 ## Caveats
