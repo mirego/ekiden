@@ -29,7 +29,7 @@ do
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
   tart clone $IMAGE_NAME $INSTANCE_NAME
   trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
-  tart run --no-graphics $INSTANCE_NAME &
+  tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 
   echo "💤 [HOST] Waiting for VM to boot"
   IP_ADDRESS=$(tart ip $INSTANCE_NAME)
