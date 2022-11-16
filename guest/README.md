@@ -23,3 +23,6 @@ The templates for this projet were adapted from the [cirruslab templates](https:
 - Run `packer build runner.pkr.hcl`
   - This will create a clone from `base` VM and configure it with the necessary tools for a runner
   - The resulting VM can be uploaded to an OCI compatible registry
+- Install the host's public key on the VM
+  - `tart run runner`
+  - `ssh-copy-id runner@$(tart ip runner)`
