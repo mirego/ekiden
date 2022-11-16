@@ -90,14 +90,15 @@ build {
   }
 
   // Xcode
-  // There is an issue with xcodes preventing the download without being logged in (https://github.com/RobotsAndPencils/xcodes/issues/243).
-  // As the apple account requires a 2 factor validation, this step will have to be performed manually.
-  // provisioner "shell" {
-  //   inline = [
-  //     "source ~/.zprofile",
-  //     "brew install robotsandpencils/made/xcodes aria2",
-  //     "sudo xcodes install --latest --experimental-unxip",
-  //     "sudo xcodebuild -runFirstLaunch",
-  //   ]
-  // }
+  provisioner "shell" {
+    inline = [
+      "source ~/.zprofile",
+      "brew install robotsandpencils/made/xcodes aria2",
+
+      // There is an issue with xcodes preventing the download without being logged in (https://github.com/RobotsAndPencils/xcodes/issues/243).
+      // As the apple account requires a 2 factor validation, this step will have to be performed manually.
+      // "sudo xcodes install --latest --experimental-unxip",
+      // "sudo xcodebuild -runFirstLaunch",
+    ]
+  }
 }
