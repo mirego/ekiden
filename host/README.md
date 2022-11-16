@@ -38,14 +38,10 @@
   $ brew install tmux wget
   ```
 
-- Install [macosvm](https://github.com/s-u/macosvm)
+- Install [tart](https://github.com/cirruslabs/tart/)
 
   ```
-  $ wget https://github.com/s-u/macosvm/releases/download/0.1-2/macosvm-0.1-2-arm64-darwin21.tar.gz
-  $ tar -xzf macosvm-0.1-2-arm64-darwin21.tar.gz
-  $ mkdir Bin
-  $ mv macosvm Bin
-  $ mkdir vm
+  $ brew install cirruslabs/cli/tart
   ```
 
 - Configure the setup
