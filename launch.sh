@@ -4,14 +4,14 @@
 # $ ./launch.sh RUNNER_NAME
 #
 
-GITHUB_API_TOKEN=<TOKEN>
-GITHUB_REGISTRATION_ENDPOINT=https://api.github.com/orgs/mirego/actions/runners/registration-token
+GITHUB_API_TOKEN=
+GITHUB_REGISTRATION_ENDPOINT=
 
 IMAGE_NAME=runner
 VM_USERNAME=runner
 VM_RUNNER_PATH=./actions-runner
 
-RUNNER_LABELS=self-hosted,M1,mirego
+RUNNER_LABELS=self-hosted,M1
 RUNNER_URL=https://github.com/mirego
 RUNNER_NAME=${1:-Runner}
 
@@ -27,15 +27,20 @@ do
 
   echo "💻 [HOST] Launching macOS VM"
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
-  trap "echo 'Cannot exit while VM is starting'" SIGINT
   tart clone $IMAGE_NAME $INSTANCE_NAME
+  trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME &
-  trap "tart stop $INSTANCE_NAME; tart delete $INSTANCE_NAME; exit 1" SIGINT
 
   echo "💤 [HOST] Waiting for VM to boot"
-  sleep 1
   IP_ADDRESS=$(tart ip $INSTANCE_NAME)
-  until [ "$(ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no $VM_USERNAME@$IP_ADDRESS pwd)" ]
+  until [[ "$IP_ADDRESS" =~ ^([0-9]+\.){3}[0-9]+$ ]]
+  do
+    IP_ADDRESS=$(tart ip $INSTANCE_NAME)
+    sleep 1
+  done
+
+  echo "💤 [HOST] Waiting for SSH to be available on VM"
+  until [ "$(ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no -oBatchMode=yes $VM_USERNAME@$IP_ADDRESS pwd)" ]
   do
     echo "💤 [HOST] Still waiting for SSH…"
   done
@@ -51,6 +56,8 @@ do
 
   echo "🔌 [HOST] Waiting for the VM to shut down"
   wait $PID
-  rm -f $LOG_FILE
+
+  echo "🧹 [HOST] Cleanup the VM"
+  tart delete $INSTANCE_NAME
   trap - SIGINT
 done
