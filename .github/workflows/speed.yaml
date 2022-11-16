@@ -9,8 +9,8 @@ jobs:
     runs-on: [self-hosted, macos, arm64]
 
     steps:
-      - run: |
-          touch /opt/homebrew/.git/TMP_FETCH_FAILURES
+      - name: Run speed test
+        run: |
           brew tap teamookla/speedtest
           brew update
           brew install speedtest --force
