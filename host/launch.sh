@@ -9,7 +9,6 @@ GITHUB_REGISTRATION_ENDPOINT=
 
 IMAGE_NAME=runner
 VM_USERNAME=runner
-VM_RUNNER_PATH=./actions-runner
 
 RUNNER_LABELS=self-hosted,M1
 RUNNER_URL=https://github.com/mirego
@@ -46,10 +45,10 @@ do
   done
 
   echo "🛠  [HOST] Configuring runner on VM"
-  ssh -q $VM_USERNAME@$IP_ADDRESS "$VM_RUNNER_PATH/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" > /dev/null
+  ssh -q $VM_USERNAME@$IP_ADDRESS "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" > /dev/null
 
   echo "🏃 [HOST] Starting runner on VM"
-  ssh -q $VM_USERNAME@$IP_ADDRESS "source ~/.zprofile && $VM_RUNNER_PATH/run.sh" 2>&1 | sed -nr 's/^(.+)$/📀 [GUEST] \1/p'
+  ssh -q $VM_USERNAME@$IP_ADDRESS "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nr 's/^(.+)$/📀 [GUEST] \1/p'
   
   echo "🪓 [HOST] Sending kill command to VM"
   ssh -q $VM_USERNAME@$IP_ADDRESS "sudo halt" > /dev/null 2>&1
