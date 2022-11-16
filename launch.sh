@@ -15,6 +15,11 @@ RUNNER_LABELS=self-hosted,M1,mirego
 RUNNER_URL=https://github.com/mirego
 RUNNER_NAME=${1:-Runner}
 
+if [ -f .env ]
+then
+  export $(cat .env | xargs)
+fi
+
 while :
 do
   echo "🎫 [HOST] Creating registration token"
