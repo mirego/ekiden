@@ -7,10 +7,15 @@ packer {
   }
 }
 
+variable "ipsw" {
+  type = string
+  default = "latest"
+}
+
 source "tart-cli" "tart" {
   # You can find macOS IPSW URLs on various websites like https://ipsw.me/
   # and https://www.theiphonewiki.com/wiki/Beta_Firmware/Mac/13.x
-  from_ipsw    = "latest"
+  from_ipsw    = "${var.ipsw}"
   vm_name      = "base"
   cpu_count    = 4
   memory_gb    = 8
