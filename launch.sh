@@ -7,7 +7,7 @@
 GITHUB_API_TOKEN=<TOKEN>
 GITHUB_REGISTRATION_ENDPOINT=https://api.github.com/orgs/mirego/actions/runners/registration-token
 
-VM_JSON_FILE=vm.json
+IMAGE_NAME=runner
 VM_USERNAME=runner
 VM_RUNNER_PATH=./actions-runner
 
@@ -21,25 +21,15 @@ do
   REGISTRATION_TOKEN=$(curl -s -XPOST -H "Authorization: bearer $GITHUB_API_TOKEN" -H "Accept: application/vnd.github.v3+json" $GITHUB_REGISTRATION_ENDPOINT | grep "token" | sed "s/..\"token\":.\"//" | sed "s/\",$//")
 
   echo "💻 [HOST] Launching macOS VM"
-  LOG_FILE=vm_logs_"$RUNNER_NAME"_"$RANDOM"
-  macosvm --ephemeral $VM_JSON_FILE > $LOG_FILE 2>&1 & VM_PID=$!
-  trap "kill $VM_PID; rm -f $LOG_FILE; exit 1" SIGINT
+  INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
+  trap "echo 'Cannot exit while VM is starting'" SIGINT
+  tart clone $IMAGE_NAME $INSTANCE_NAME
+  tart run --no-graphics $INSTANCE_NAME &
+  trap "tart stop $INSTANCE_NAME; tart delete $INSTANCE_NAME; exit 1" SIGINT
 
   echo "💤 [HOST] Waiting for VM to boot"
-  while : ; do
-    sleep 1
-    MAC_ADDRESS=$(cat $LOG_FILE | sed -nr 's/.+network: ether ([a-z0-9:]+).*/\1/p' | sed -r 's/(^|:)0/\1/g')
-    [ -z "$MAC_ADDRESS" ] || break
-  done
-
-  echo "💤 [HOST] Waiting for network to be available on VM"
-  while : ; do
-    sleep 1
-    IP_ADDRESS=$(arp -a | sed -nr "s/\? \(([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)\).+$MAC_ADDRESS.+/\1/p")
-    [ -z "$IP_ADDRESS" ] || break
-  done
-
-  echo "💤 [HOST] Waiting for SSH to be available on VM"
+  sleep 1
+  IP_ADDRESS=$(tart ip $INSTANCE_NAME)
   until [ "$(ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no $VM_USERNAME@$IP_ADDRESS pwd)" ]
   do
     echo "💤 [HOST] Still waiting for SSH…"
