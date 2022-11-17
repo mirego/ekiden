@@ -1,5 +1,4 @@
-
-### UI
+## UI
 
 - In the initial macOS setup
   - Use `admin` as the username for the initial user
@@ -10,69 +9,47 @@
   - Energy — Disable sleep
 - Put the screen in sleep mode
 
-### CLI
+## CLI
 
-- From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to the machine
+### Install SSH Key
 
+From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to the machine
   ```
   # You’ll be prompted for admin’s password just this one time
   $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
   ```
 
-- Still from your local machine, copy a few files from this repository
+### Copy Files
+Still from your local machine, copy a few files from this repository. The `.env` contains the secrets for the runner (see `.env.example` for a template)
 
   ```
   $ scp .zshrc admin@<HOST_IP>
   $ scp .vimrc admin@<HOST_IP>
+  $ scp launch.sh admin@<HOST_IP>:vm
+  $ scp .env admin@<HOST_IP>:vm
   ```
 
-- On the remote machiine, install [Homebrew](https://brew.sh)
+### Install Tools
+
+On the remote machine, install [Homebrew](https://brew.sh)
 
   ```
   $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   ```
 
-- Install `tmux` and `wget`
+Install `tmux`, `wget` and [tart](https://github.com/cirruslabs/tart/)
 
   ```
-  $ brew install tmux wget
+  $ brew install tmux wget cirruslabs/cli/tart
   ```
 
-- Install [tart](https://github.com/cirruslabs/tart/)
-
-  ```
-  $ brew install cirruslabs/cli/tart
-  ```
-
-- Configure the setup
-
-  - From your local machine, copy the launch script into the remote machine’s `vm` directory
-
-    ```
-    $ scp launch.sh admin@<HOST_IP>:vm
-    ```
-
-- Configure the rest of the setup
-  ⚠️ **This part is still a work in progress**
-
-  - Configure the value for `GITHUB_API_TOKEN` in `vm/launch.sh`
-  - Add the private SSH key to communicate with the VM
-  - Fetch the rest of the `vm` directory content from another host machine (using cryptic/fancy `scp` commands)
-
-- Start tmux and launch a new runner!
+### Start the Runner
+Start tmux and launch a new runner!
 
   ```
   $ tmux
   $ cd vm
-  $ ./launch.sh mirego-XX
+  $ ./launch.sh
   ```
 
-- Detach from tmux with (press `^B`, release and then `d`)
-
-- Logout from the remote machine
-
-  ```
-  $ exit
-  ```
-
-- 🎉
+You can now detach from tmux with (press `^B`, release and then `d`)
