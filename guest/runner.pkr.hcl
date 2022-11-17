@@ -12,7 +12,7 @@ source "tart-cli" "tart" {
   vm_name      = "runner"
   cpu_count    = 7
   memory_gb    = 7
-  disk_size_gb = 80
+  disk_size_gb = 120
   ssh_password = "runner"
   ssh_username = "runner"
   ssh_timeout  = "120s"
@@ -99,6 +99,40 @@ build {
       // As the apple account requires a 2 factor validation, this step will have to be performed manually.
       // "sudo xcodes install --latest --experimental-unxip",
       // "sudo xcodebuild -runFirstLaunch",
+    ]
+  }
+
+  // Cert
+  provisioner "shell" {
+    inline = [
+      "source ~/.zprofile",
+      
+      // Allow admin settings change in a non interactive shell
+      "sudo security authorizationdb write com.apple.trust-settings.admin allow",
+      
+      "wget https://developer.apple.com/certificationauthority/AppleWWDRCA.cer",
+      "sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain AppleWWDRCA.cer",
+      "rm AppleWWDRCA.cer",
+
+      "wget https://www.apple.com/certificateauthority/AppleWWDRCAG2.cer",
+      "sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain AppleWWDRCAG2.cer",
+      "rm AppleWWDRCAG2.cer",
+
+      "wget https://www.apple.com/certificateauthority/AppleWWDRCAG3.cer",
+      "sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain AppleWWDRCAG3.cer",
+      "rm AppleWWDRCAG3.cer",
+
+      "wget https://www.apple.com/certificateauthority/AppleWWDRCAG4.cer",
+      "sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain AppleWWDRCAG4.cer",
+      "rm AppleWWDRCAG4.cer",
+
+      "wget https://www.apple.com/certificateauthority/AppleWWDRCAG5.cer",
+      "sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain AppleWWDRCAG5.cer",
+      "rm AppleWWDRCAG5.cer",
+
+      "wget https://www.apple.com/certificateauthority/AppleWWDRCAG6.cer",
+      "sudo security add-trusted-cert -d -r trustAsRoot -k /Library/Keychains/System.keychain AppleWWDRCAG6.cer",
+      "rm AppleWWDRCAG6.cer",
     ]
   }
 }
