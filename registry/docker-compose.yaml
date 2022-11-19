@@ -1,0 +1,8 @@
+services:
+  registry:
+    restart: always
+    image: registry:2
+    ports:
+      - 6000:5000
+    volumes:
+      - /Users/user/registry:/var/lib/registry
