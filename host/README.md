@@ -1,19 +1,22 @@
 ## UI
 
-- In the initial macOS setup
-  - Use `admin` as the username for the initial user
-- After the macOS setup, adjust the machine’s preferences:
-  - Sharing — Enable Screen sharing
-  - Sharing — Enable Remote access (SSH/Remote Desktop)
-  - Sharing — Edit machine hostname (`gh-shr-XX`)
-  - Energy — Disable sleep
-- Put the screen in sleep mode
+### Complete the macOS setup
+
+Use `admin` as the username for the initial user
+
+### Adjust the machine’s preferences:
+
+- Sharing — Enable Screen sharing
+- Sharing — Enable Remote access (SSH/Remote Desktop)
+- Sharing — Edit machine hostname (`gh-shr-XX`)
+- Energy — Disable sleep
 
 ## CLI
 
 ### Install SSH Key
 
 From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to the machine
+
   ```
   # You’ll be prompted for admin’s password just this one time
   $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
@@ -31,15 +34,10 @@ Still from your local machine, copy a few files from this repository. The `.env`
 
 ### Install Tools
 
-On the remote machine, install [Homebrew](https://brew.sh)
+On the remote machine, install [Homebrew](https://brew.sh), `tmux`, `wget` and [tart](https://github.com/cirruslabs/tart/)
 
   ```
   $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  ```
-
-Install `tmux`, `wget` and [tart](https://github.com/cirruslabs/tart/)
-
-  ```
   $ brew install tmux wget cirruslabs/cli/tart
   ```
 
