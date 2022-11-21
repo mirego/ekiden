@@ -25,9 +25,9 @@ The templates for this projet were adapted from the [cirruslab templates](https:
 2. Install Xcode on the runner
   - `xcodes install --latest --experimental-unxip --data-source apple`
   - Xcode cannot be installed automatically as it requires a 2FA with an Apple ID
-  - Start Xcode to install additionnal runtimes (WatchOS, TvOS)
-1. Install the host's public key on the VM
+  - Start Xcode to install additionnal runtimes (watchOS, tvOS)
+3. Install the host's public key on the VM
   - `tart run runner`
   - `ssh-copy-id runner@$(tart ip runner)`
-1. Push the image on the container registry
+4. Push the image on the container registry
   - `tart push runner REGISTRY_URL/runner:latest --insecure`
