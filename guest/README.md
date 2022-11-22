@@ -1,4 +1,5 @@
 # Guest Configuration
+
 The templates for this projet were adapted from the [cirruslab templates](https://github.com/cirruslabs/macos-image-templates).
 
 ## Prerequisite
