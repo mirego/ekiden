@@ -1,3 +1,5 @@
+# Host Configuration
+
 ## UI
 
 ### Complete the macOS setup
