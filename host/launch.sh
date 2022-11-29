@@ -14,13 +14,23 @@ RUNNER_LABELS=self-hosted,M1
 RUNNER_URL=https://github.com/mirego
 RUNNER_NAME=${1:-Runner}
 
+REGISTRY_URL=
+REGISTRY_USERNAME=
+REGISTRY_PASSWORD=
+
 if [ -f .env ]
 then
   export $(cat .env | xargs)
 fi
 
+echo "🪪 [HOST] Logging into the VM registry"
+echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
+
 while :
 do
+  echo "🔍 [HOST] Searching for an updated VM"
+  tart pull $REGISTRY_URL/runner
+
   echo "🎫 [HOST] Creating registration token"
   REGISTRATION_TOKEN=$(curl -s -XPOST -H "Authorization: bearer $GITHUB_API_TOKEN" -H "Accept: application/vnd.github.v3+json" $GITHUB_REGISTRATION_ENDPOINT | grep "token" | sed "s/..\"token\":.\"//" | sed "s/\",$//")
 
