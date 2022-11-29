@@ -2,10 +2,13 @@
 
 The goal of this project is to have a pool of Mirego hosted runners in addition to the runners provided by GitHub. Those runners will be executed inside an ARM64 MacOS machine which should help speed up iOS builds.
 
-## Setup a Runner
+## Configuration
 
 - To configure a new host machine, follow the [host configuration guide](host/README.md)
 - To create a new VM, follow the [guest configuration guide](guest/README.md)
+- To setup the VM registry, follow the [registry configuration guide](registry/README.md)
+
+---
 
 ## Architecture
 
