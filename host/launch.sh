@@ -28,15 +28,12 @@ echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USE
 
 while :
 do
-  echo "🔍 [HOST] Searching for an updated VM"
-  tart pull $REGISTRY_URL/runner
-
   echo "🎫 [HOST] Creating registration token"
   REGISTRATION_TOKEN=$(curl -s -XPOST -H "Authorization: bearer $GITHUB_API_TOKEN" -H "Accept: application/vnd.github.v3+json" $GITHUB_REGISTRATION_ENDPOINT | grep "token" | sed "s/..\"token\":.\"//" | sed "s/\",$//")
 
   echo "💻 [HOST] Launching macOS VM"
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
-  tart clone $REGISTRY_IMAGE_NAME $INSTANCE_NAME
+  tart clone $REGISTRY_URL/$REGISTRY_IMAGE_NAME $INSTANCE_NAME
   trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 
