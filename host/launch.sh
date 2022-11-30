@@ -7,17 +7,32 @@
 GITHUB_API_TOKEN=
 GITHUB_REGISTRATION_ENDPOINT=
 
-IMAGE_NAME=runner
 VM_USERNAME=runner
 
 RUNNER_LABELS=self-hosted,M1
 RUNNER_URL=https://github.com/mirego
 RUNNER_NAME=${1:-Runner}
 
+REGISTRY_URL=
+REGISTRY_USERNAME=
+REGISTRY_PASSWORD=
+REGISTRY_IMAGE_NAME=runner
+
+KEYCHAIN_PASSWORD=
+
 if [ -f .env ]
 then
   export $(cat .env | xargs)
 fi
+
+if [ -n "$VAR" ]
+then
+  echo "🔐 [HOST] Unlocking the keychain"
+  security unlock-keychain -p $KEYCHAIN_PASSWORD ~/Library/Keychains/login.keychain-db
+fi
+
+echo "🪪 [HOST] Logging into the VM registry"
+echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
 
 while :
 do
@@ -26,7 +41,7 @@ do
 
   echo "💻 [HOST] Launching macOS VM"
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
-  tart clone $IMAGE_NAME $INSTANCE_NAME
+  tart clone $REGISTRY_URL/$REGISTRY_IMAGE_NAME $INSTANCE_NAME
   trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 

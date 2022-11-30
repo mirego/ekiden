@@ -25,13 +25,18 @@ From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to t
   ```
 
 ### Copy Files
-Still from your local machine, copy a few files from this repository. The `.env` contains the secrets for the runner (see `.env.example` for a template)
+Still from your local machine, copy a few files from this repository. The `domain.crt` file is the certificate required to access the VM registry. The `.env` contains secrets for the runner (see `.env.example` for a template). An ssh key is also installed on the host to facilitate the connection to the VM. 
+
+Those values can all be found in 1Password’s `Shared - GitHub Actions SHR` vault.
 
   ```
   $ scp .zshrc admin@<HOST_IP>
   $ scp .vimrc admin@<HOST_IP>
+  $ scp domain.crt admin@<HOST_IP>
   $ scp launch.sh admin@<HOST_IP>:vm
   $ scp .env admin@<HOST_IP>:vm
+  $ scp id_rsa admin@<HOST_IP>:.ssh
+  $ scp id_rsa.pub admin@<HOST_IP>:.ssh
   ```
 
 ### Install Tools
@@ -42,6 +47,9 @@ On the remote machine, install [Homebrew](https://brew.sh), `tmux`, `wget` and [
   $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
   $ brew install tmux wget cirruslabs/cli/tart
   ```
+
+### Install Certificate
+Open the certificate in the keychain and make sure it is marked as "Always Trust".
 
 ### Start the Runner
 Start tmux and launch a new runner!

@@ -1,17 +1,20 @@
 # GitHub Actions Self-Hosted ARM64 MacOS Runner
 
-The goal of this project is to have a pool of Mirego hosted runners in addition to the runners provided by GitHub. Those runners will be executed inside an ARM64 MacOS machine which should help speed up iOS builds.
+The goal of this project is to have a pool of Mirego hosted runners in addition to the runners provided by GitHub. Those runners are executed inside an ARM64 MacOS machine.
 
-## Setup a Runner
+## Configuration
 
-- To configure a new host machine, follow the [host configuration guide](host/README.md)
-- To create a new VM, follow the [guest configuration guide](guest/README.md)
+- To configure a new __host__ machine, follow the [host configuration guide](host/README.md)
+- To create a new __VM__, follow the [guest configuration guide](guest/README.md)
+- To setup the VM __registry__, follow the [registry configuration guide](registry/README.md)
+
+---
 
 ## Architecture
 
 ### High Level Overview
 
-Mirego will have a few machines hosted on premise. Those machines will be able to pick up jobs just like the GitHub hosted machines. The self-hosted runners will include tags in order to be explicitely chosen inside the workflows (`self-hosted`, `ARM64`, `mirego`...).
+Mirego has a few GitHub Actions runners hosted on premise. The self-hosted runners include tags that can be used to explicitely chosen inside the workflows (`self-hosted`, `ARM64`, `mirego`...).
 
 ```mermaid
 flowchart TD
@@ -23,10 +26,15 @@ flowchart TD
 
     subgraph mirego [Mirego Network]
         subgraph spacer2 [ ]
-            runner1(MacOS Runner 1):::machine<-->github
-            runner2(MacOS Runner 2):::machine<-->github
-            runner3(MacOS Runner 3):::machine<-->github
-            runner4(MacOS Runner 4):::machine<-->github
+            runner1(Mirego Runner 1):::machine<-->github
+            runner2(Mirego Runner 2):::machine<-->github
+        end
+    end
+
+    subgraph internet [Internet]
+        subgraph spacer [ ]
+            githubrunner1(GitHub Runner 1):::machine<-->github
+            githubrunner2(GitHub Runner 2):::machine<-->github
         end
     end
 
@@ -41,19 +49,20 @@ flowchart TD
 
 ### Inside a Runner
 
-In order to simplify maintenance and to increase the runner's reliability and the build's repeatability, each runner will run inside an ephemeral VM. This way, whenever a runner picks up a job, the workspace is assured to be in a clean state. This will also allow us to install and upgrade tools inside the VM and replicate it to every other machines.
+In order to simplify maintenance and to increase the runner's reliability and the build's repeatability, each runner runs inside an ephemeral virtual machine. This way, whenever a runner picks up a job, the workspace is assured to be in a clean state. This also allows us to install and upgrade tools inside the VM and replicate it to every other machines.
 
 A typical run-loop looks like this:
 
-1. The _host_ machine generates a token from the GitHub API.
-2. The _host_ machine launches a virtual machine (_guest_) with a cloned virtual disk.
-3. The _host_ machine initiates an SSH connection to the _guest_ using a pre-defined hostname.
-4. The _host_ machine launches the "runner" software pre-installed on the VM using the generated token.
-5. The _guest_ machine waits for a job and executes it.
-6. The _guest_ machine de-registers the runner from the GitHub organisation.
-7. The _host_ machine shuts down the VM
-8. The _host_ machine deletes the cloned virtual disk
-9. Repeat
+1. The _host_ machine pulls the most recent VM from the VM registry.
+2. The _host_ machine generates a token from the GitHub API.
+3. The _host_ machine launches a virtual machine (_guest_) with a cloned virtual disk.
+4. The _host_ machine initiates an SSH connection to the _guest_.
+5. The _host_ machine launches the "runner" software pre-installed on the VM using the generated token.
+6. The _guest_ machine waits for a job and executes it.
+7. The _guest_ machine de-registers the runner from GitHub.
+8. The _host_ machine shuts down the VM
+9. The _host_ machine deletes the cloned virtual disk
+10. Repeat
 
 ```mermaid
 flowchart LR
@@ -61,16 +70,15 @@ flowchart LR
         subgraph spacer [ ]
             subgraph host [Mac OS Runner Host]
                 subgraph spacer2 [ ]
-                    script(Main Script)-->sshClient(SSH Client)
-                    script--Launch-->guest
-                    sshClient<-.->sshServer
+                    script(Launch Script)-->runner(SSH Client)
                     subgraph guest [Mac OS VM]
-                        sshServer(SSH Server)-->runner(Action Runner)
-                        tools(Pre-Installed Tools)
+                        runner(Runner)<-.->tools(Pre-Installed Tools)
                     end
                 end
             end
         end
+
+        registry[(VM Registry)]-->script
     end
 
     subgraph internet [Internet]
@@ -84,4 +92,5 @@ flowchart LR
     style spacer2 fill:transparent,stroke:transparent
 
     style host fill:#15653a,stroke:#25ba6b
+    style registry fill:#834738,stroke:#eb4b39
 ```

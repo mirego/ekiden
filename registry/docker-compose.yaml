@@ -3,6 +3,15 @@ services:
     restart: always
     image: registry:2
     ports:
-      - 6000:5000
+      - 443:443
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: realm
+      REGISTRY_HTTP_ADDR: 0.0.0.0:443
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
+      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
+      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
     volumes:
-      - /Users/user/registry:/var/lib/registry
+      - ./data:/var/lib/registry
+      - ./auth:/auth
+      - ./certs:/certs
