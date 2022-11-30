@@ -23,6 +23,12 @@ then
   export $(cat .env | xargs)
 fi
 
+if [ -n "$VAR" ]
+then
+  echo "🔐 [HOST] Unlocking the keychain"
+  security unlock-keychain -p KEYCHAIN_PASSWORD ~/Library/Keychains/login.keychain-db
+fi
+
 echo "🪪 [HOST] Logging into the VM registry"
 echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
 
