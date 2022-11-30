@@ -7,7 +7,6 @@
 GITHUB_API_TOKEN=
 GITHUB_REGISTRATION_ENDPOINT=
 
-IMAGE_NAME=runner
 VM_USERNAME=runner
 
 RUNNER_LABELS=self-hosted,M1
@@ -17,6 +16,7 @@ RUNNER_NAME=${1:-Runner}
 REGISTRY_URL=
 REGISTRY_USERNAME=
 REGISTRY_PASSWORD=
+REGISTRY_IMAGE_NAME=runner
 
 if [ -f .env ]
 then
@@ -36,7 +36,7 @@ do
 
   echo "💻 [HOST] Launching macOS VM"
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
-  tart clone $IMAGE_NAME $INSTANCE_NAME
+  tart clone $REGISTRY_IMAGE_NAME $INSTANCE_NAME
   trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 
