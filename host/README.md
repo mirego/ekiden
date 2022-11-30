@@ -33,6 +33,8 @@ Still from your local machine, copy a few files from this repository. The `domai
   $ scp domain.crt admin@<HOST_IP>
   $ scp launch.sh admin@<HOST_IP>:vm
   $ scp .env admin@<HOST_IP>:vm
+  $ scp id_rsa admin@<HOST_IP>:.ssh
+  $ scp id_rsa.pub admin@<HOST_IP>:.ssh
   ```
 
 ### Install Tools
