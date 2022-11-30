@@ -25,7 +25,9 @@ From your local machine, copy your public SSH key (eg. `~/.ssh/id_rsa.pub`) to t
   ```
 
 ### Copy Files
-Still from your local machine, copy a few files from this repository. The `domain.crt` file is the certificate required to access the VM registry. It can be found in 1password. The `.env` contains secrets for the runner (see `.env.example` for a template). The values for this file can also be found in 1password. An ssh key is also installed on the host to facilitate the connection to the VM.
+Still from your local machine, copy a few files from this repository. The `domain.crt` file is the certificate required to access the VM registry. The `.env` contains secrets for the runner (see `.env.example` for a template). An ssh key is also installed on the host to facilitate the connection to the VM. 
+
+Those values can all be found in 1Password’s `Shared - GitHub Actions SHR` vault.
 
   ```
   $ scp .zshrc admin@<HOST_IP>
