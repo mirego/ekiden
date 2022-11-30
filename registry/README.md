@@ -2,7 +2,7 @@
 
 ## Prerequisite
 
-- Install [docker](https://www.docker.com/)
+- Install [Docker](https://www.docker.com/)
 - Install `htpasswd` (preinstalled on MacOS)
 
 ## Prepare the machine
