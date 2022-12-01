@@ -50,6 +50,12 @@ On the remote machine, install [Homebrew](https://brew.sh), `tmux`, `wget` and [
 
 ### Install Certificate
 Open the certificate in the keychain and make sure it is marked as "Always Trust".
+Alternatively, this can also be done from command line:
+  ```
+  $ sudo security authorizationdb write com.apple.trust-settings.admin allow
+  $ security unlock-keychain ~/Library/Keychains/login.keychain-db
+  $ security add-trusted-cert -d -k ~/Library/Keychains/login.keychain domain.crt
+  ```
 
 ### Start the Runner
 Start tmux and launch a new runner!

@@ -20,8 +20,11 @@
 
 ## Generate a certificate
 
+Replace `SERVER_IP` with the actual IP.
+
 ```sh
 openssl req \
   -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key \
+  -addext "subjectAltName = IP:SERVER_IP" \
   -x509 -days 365 -out certs/domain.crt
 ```
