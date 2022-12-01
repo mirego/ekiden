@@ -25,10 +25,10 @@ then
   export $(cat .env | xargs)
 fi
 
-if [ -n "$VAR" ]
+if [ -n "$KEYCHAIN_PASSWORD" ]
 then
   echo "🔐 [HOST] Unlocking the keychain"
-  security unlock-keychain -p $KEYCHAIN_PASSWORD ~/Library/Keychains/login.keychain-db
+  security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/login.keychain-db
 fi
 
 echo "🪪 [HOST] Logging into the VM registry"
