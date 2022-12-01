@@ -6,7 +6,7 @@ on:
 jobs:
   speed:
     name: Speed Test
-    runs-on: [self-hosted, macos, arm64]
+    runs-on: [self-hosted, randy]
 
     steps:
       - name: Run speed test

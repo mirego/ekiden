@@ -5,7 +5,7 @@ on:
 
 jobs:
   hello:
-    runs-on: [self-hosted, macos, arm64]
+    runs-on: [self-hosted, randy]
 
     steps:
       - uses: actions/checkout@v3
