@@ -57,6 +57,7 @@ do
   until [ "$(ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no -oBatchMode=yes $VM_USERNAME@$IP_ADDRESS pwd)" ]
   do
     echo "💤 [HOST] Still waiting for SSH…"
+    sleep 1
   done
 
   echo "🛠  [HOST] Configuring runner on VM"

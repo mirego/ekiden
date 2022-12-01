@@ -32,7 +32,7 @@ build {
       "source ~/.zprofile",
       "brew --version",
       "brew update",
-      "brew install wget cmake gcc git-lfs jq unzip zip ca-certificates",
+      "brew install wget cmake gcc git-lfs jq unzip zip ca-certificates awscli",
       "git lfs install",
     ]
   }
@@ -99,6 +99,7 @@ build {
       // As the apple account requires a 2 factor validation, this step will have to be performed manually.
       // "sudo xcodes install --latest --experimental-unxip",
       // "sudo xcodebuild -runFirstLaunch",
+      // "sudo xcodebuild -downloadAllPlatforms",
     ]
   }
 
