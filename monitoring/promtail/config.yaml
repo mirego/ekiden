@@ -1,0 +1,15 @@
+server:
+  disable: true
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://HOST_URL/loki/api/v1/push
+
+scrape_configs:
+  - job_name: runner
+    static_configs:
+      - labels:
+          machine: MACHINE_NAME
+          __path__: /logfiles/*.log
