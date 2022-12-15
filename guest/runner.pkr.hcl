@@ -51,16 +51,17 @@ build {
     ]
   }
 
-  // Ruby
+  // asdf
   provisioner "shell" {
     inline = [
       "source ~/.zprofile",
-      "brew install rbenv",
-      "echo 'if which rbenv > /dev/null; then eval \"$(rbenv init -)\"; fi' >> ~/.zprofile",
+      "brew install asdf",
+      "echo \". $(brew --prefix asdf)/libexec/asdf.sh\" >> ~/.zprofile",
       "source ~/.zprofile",
-      "rbenv install 3.0.4",
-      "rbenv global 3.0.4",
-      "sudo gem install bundler",
+      "asdf plugin add nodejs",
+      "asdf plugin add java",
+      "asdf plugin add ruby",
+      "asdf plugin add python",
     ]
   }
 
@@ -98,6 +99,8 @@ build {
       // There is an issue with xcodes preventing the download without being logged in (https://github.com/RobotsAndPencils/xcodes/issues/243).
       // As the apple account requires a 2 factor validation, this step will have to be performed manually.
       // "sudo xcodes install --latest --experimental-unxip",
+      // "sudo xcode-select -s \"/Applications/$(ls /Applications | grep -m 1 Xcode)\""
+      // "sudo xcodebuild -license accept"
       // "sudo xcodebuild -runFirstLaunch",
       // "sudo xcodebuild -downloadAllPlatforms",
     ]
