@@ -1,0 +1,7 @@
+global:
+  scrape_interval: 5s
+
+scrape_configs:
+- job_name: node
+  static_configs:
+  - targets: ['HOST_URL:9200']
