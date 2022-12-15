@@ -43,8 +43,15 @@ then
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/login.keychain-db
 fi
 
-log_output "[HOST] 📡 Logging into the VM registry"
-echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
+if [ -z "${REGISTRY_URL}"]
+then
+  REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
+else
+  echo "$REGISTRY_URL"
+  log_output "[HOST] 📡 Logging into the VM registry"
+  echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
+  REGISTRY_PATH="$REGISTRY_URL/$REGISTRY_IMAGE_NAME"
+fi
 
 while :
 do
@@ -53,7 +60,7 @@ do
 
   log_output "[HOST] 💻 Launching macOS VM"
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
-  tart clone $REGISTRY_URL/$REGISTRY_IMAGE_NAME $INSTANCE_NAME
+  tart clone $REGISTRY_PATH $INSTANCE_NAME
   trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 
