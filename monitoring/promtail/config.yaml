@@ -9,7 +9,17 @@ clients:
 
 scrape_configs:
   - job_name: runner
+  
     static_configs:
       - labels:
-          machine: MACHINE_NAME
+          machine: mirego-shr-01
           __path__: /logfiles/*.log
+
+    pipeline_stages:
+      - regex:
+          expression: "^(?P<timestamp>\\d+/\\d+/\\d+ \\d+:\\d+:\\d+) (?P<content>.*)$"
+      - timestamp:
+          source: timestamp
+          format: 2006/01/02 15:04:05
+      - output:
+          source: content
