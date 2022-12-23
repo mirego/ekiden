@@ -37,6 +37,9 @@ then
   export $(cat .env | xargs)
 fi
 
+# Shutdown message
+trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
+
 # Unlock keychain (required to store the registry credentials)
 if [ -n "$KEYCHAIN_PASSWORD" ]
 then
@@ -66,7 +69,7 @@ do
   log_output "[HOST] 💻 Launching macOS VM"
   INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RUN_ID"
   tart clone $REGISTRY_PATH $INSTANCE_NAME
-  trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
+  trap "log_output \"[HOST] 🪓 Killing the VM\"; tart delete $INSTANCE_NAME; log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 
   log_output "[HOST] 💤 Waiting for VM to boot"
@@ -99,5 +102,5 @@ do
   tart delete $INSTANCE_NAME
 
   RUN_ID=""
-  trap - SIGINT
+  trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
 done
