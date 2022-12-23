@@ -20,7 +20,7 @@ LOGFILE=runner.log
 
 function log_output {
   echo `date "+%Y/%m/%d %H:%M:%S"`" $1"
-  echo `date "+%Y/%m/%d %H:%M:%S"`" [$RUN_ID] $1" >> $LOGFILE
+  echo `date "+%Y/%m/%d %H:%M:%S"`" [${RUN_ID:-PREPARING}] $1" >> $LOGFILE
 }
 
 function stream_output {
@@ -48,14 +48,13 @@ then
 fi
 
 # Login to the registry
-if [ -z "${REGISTRY_URL}"]
+if [ -n "${REGISTRY_URL}" ]
 then
-  REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
-else
-  echo "$REGISTRY_URL"
   log_output "[HOST] 📡 Logging into the VM registry"
   echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
   REGISTRY_PATH="$REGISTRY_URL/$REGISTRY_IMAGE_NAME"
+else
+  REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
 fi
 
 # Main loop
