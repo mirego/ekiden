@@ -25,8 +25,8 @@ function log_output {
 
 function stream_output {
   read OUTPUT
-  while read -r line; 
-  do 
+  while read -r line;
+  do
       log_output "$line"
   done
 }
@@ -83,7 +83,7 @@ do
 
   log_output "[HOST] 🏃 Starting runner on VM"
   ssh -q $VM_USERNAME@$IP_ADDRESS "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
-  
+
   log_output "[HOST] 🪓 Sending kill command to VM"
   ssh -q $VM_USERNAME@$IP_ADDRESS "sudo halt" > /dev/null 2>&1
 
