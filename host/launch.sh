@@ -20,7 +20,7 @@ LOGFILE=runner.log
 
 function log_output {
   echo `date "+%Y/%m/%d %H:%M:%S"`" $1"
-  echo `date "+%Y/%m/%d %H:%M:%S"`" $1" >> $LOGFILE
+  echo `date "+%Y/%m/%d %H:%M:%S"`" [${RUN_ID:-PREPARING}] $1" >> $LOGFILE
 }
 
 function stream_output {
@@ -37,31 +37,38 @@ then
   export $(cat .env | xargs)
 fi
 
+# Shutdown message
+trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
+
+# Unlock keychain (required to store the registry credentials)
 if [ -n "$KEYCHAIN_PASSWORD" ]
 then
   log_output "[HOST] 🔐 Unlocking the keychain"
   security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/login.keychain-db
 fi
 
-if [ -z "${REGISTRY_URL}"]
+# Login to the registry
+if [ -n "${REGISTRY_URL}" ]
 then
-  REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
-else
-  echo "$REGISTRY_URL"
   log_output "[HOST] 📡 Logging into the VM registry"
   echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
   REGISTRY_PATH="$REGISTRY_URL/$REGISTRY_IMAGE_NAME"
+else
+  REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
 fi
 
+# Main loop
 while :
 do
+  RUN_ID="$RANDOM$RANDOM"
+
   log_output "[HOST] 🎫 Creating registration token"
   REGISTRATION_TOKEN=$(curl -s -XPOST -H "Authorization: bearer $GITHUB_API_TOKEN" -H "Accept: application/vnd.github.v3+json" $GITHUB_REGISTRATION_ENDPOINT | grep "token" | sed "s/..\"token\":.\"//" | sed "s/\",$//")
 
   log_output "[HOST] 💻 Launching macOS VM"
-  INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RANDOM"
+  INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RUN_ID"
   tart clone $REGISTRY_PATH $INSTANCE_NAME
-  trap "tart delete $INSTANCE_NAME; exit 1" SIGINT
+  trap "log_output \"[HOST] 🪓 Killing the VM\"; tart delete $INSTANCE_NAME; log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
   tart run --no-graphics $INSTANCE_NAME > /dev/null 2>&1 &
 
   log_output "[HOST] 💤 Waiting for VM to boot"
@@ -89,5 +96,7 @@ do
 
   log_output "[HOST] 🧹 Cleanup the VM"
   tart delete $INSTANCE_NAME
-  trap - SIGINT
+
+  RUN_ID=""
+  trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
 done

@@ -2,9 +2,14 @@ auth_enabled: false
 
 server:
   http_listen_port: 3100
+  http_server_read_timeout: 60s # allow longer time span queries
+  http_server_write_timeout: 60s # allow longer time span queries
+  grpc_server_max_recv_msg_size: 33554432 # 32MiB (int bytes), default 4MB
+  grpc_server_max_send_msg_size: 33554432 # 32MiB (int bytes), default 4MB
 
 frontend:
-  max_outstanding_per_tenant: 2048
+  max_outstanding_per_tenant: 4096
+  compress_responses: true
 
 common:
   path_prefix: /tmp/loki
@@ -27,3 +32,14 @@ schema_config:
       index:
         prefix: index_
         period: 24h
+
+query_range:
+  parallelise_shardable_queries: false
+  split_queries_by_interval: 0
+  cache_results: true
+  results_cache:
+    cache:
+      enable_fifocache: true
+      fifocache:
+        max_size_items: 1024
+        validity: 24h
