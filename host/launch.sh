@@ -84,11 +84,8 @@ do
   log_output "[HOST] 🏃 Starting runner on VM"
   ssh -q $VM_USERNAME@$IP_ADDRESS "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
 
-  log_output "[HOST] 🪓 Sending kill command to VM"
-  ssh -q $VM_USERNAME@$IP_ADDRESS "sudo halt" > /dev/null 2>&1
-
-  log_output "[HOST] 🔌 Waiting for the VM to shut down"
-  wait $PID
+  log_output "[HOST] ✋ Stop the VM"
+  tart stop $INSTANCE_NAME
 
   log_output "[HOST] 🧹 Cleanup the VM"
   tart delete $INSTANCE_NAME
