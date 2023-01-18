@@ -4,10 +4,10 @@ The goal of this project is to have a pool of Mirego hosted runners in addition 
 
 ## Configuration
 
-- To configure a new __host__ machine, follow the [host configuration guide](host/README.md)
-- To create a new __VM__, follow the [guest configuration guide](guest/README.md)
-- To setup the VM __registry__, follow the [registry configuration guide](registry/README.md)
-- To setup __Grafana__ to monitor the machines, follow the [monitoring configuration guide](monitoring/README.md)
+- To configure a new **host** machine, follow the [host configuration guide](host/README.md)
+- To create a new **VM**, follow the [guest configuration guide](guest/README.md)
+- To setup the VM **registry**, follow the [registry configuration guide](registry/README.md)
+- To setup **Grafana** to monitor the machines, follow the [monitoring configuration guide](monitoring/README.md)
 
 ---
 

@@ -28,3 +28,4 @@ openssl req \
   -addext "subjectAltName = IP:SERVER_IP" \
   -x509 -days 365 -out certs/domain.crt
 ```
+
