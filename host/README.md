@@ -8,10 +8,10 @@ Use `admin` as the username for the initial user
 
 ### Adjust the machine’s preferences:
 
-- Sharing — Enable Screen sharing
-- Sharing — Enable Remote access (SSH/Remote Desktop)
-- Sharing — Edit machine hostname (`gh-shr-XX`)
-- Energy — Disable sleep
+- General → Sharing → enable **Screen Sharing**
+- General → Sharing → enable **Remote Login**
+- General → Sharing → edit **Hostname** (`gh-shr-XX`)
+- Displays → Advanced… → Energy → enable **Prevent automatic sleeping when display is off**
 
 ## CLI
 
