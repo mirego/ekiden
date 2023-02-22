@@ -3,6 +3,8 @@
   <p><br />GitHub Actions self-hosted <code>arm64</code> macOS runners</p>
 </div>
 
+## Introduction
+
 The goal of this project is to have a pool of [GitHub Actions self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) in addition to the runners provided by GitHub. Those runners are executed inside an `arm64` macOS machine.
 
 It uses [Tart](https://tart.run/) to orchestrate virtual machine image deployments and [Packer](https://www.packer.io/) to provision these images.
