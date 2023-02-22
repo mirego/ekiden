@@ -18,8 +18,8 @@ Use `admin` as the username for the initial user
     <th>Sharing
     <th>Displays
   <tr>
-    <td><img width="300" alt="Capture d’écran, le 2023-01-18 à 14 21 43" src="https://user-images.githubusercontent.com/11348/213275950-7e9976dc-f2b4-456f-a915-fcda26af6afc.png">
-    <td><img width="300" alt="Capture d’écran, le 2023-01-18 à 14 21 58" src="https://user-images.githubusercontent.com/11348/213275979-c53d5c69-2028-4277-aef3-3af502dcdba6.png">
+    <td><img width="300" alt="" src="https://user-images.githubusercontent.com/11348/213275950-7e9976dc-f2b4-456f-a915-fcda26af6afc.png">
+    <td><img width="300" alt="" src="https://user-images.githubusercontent.com/11348/213275979-c53d5c69-2028-4277-aef3-3af502dcdba6.png">
 </table>
 
 ## CLI
@@ -36,8 +36,6 @@ $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
 ### Copy Files
 
 Still from your local machine, copy a few files from this repository. The `domain.crt` file is the certificate required to access the VM registry. The `.env` contains secrets for the runner (see `.env.example` for a template). An ssh key is also installed on the host to facilitate the connection to the VM.
-
-Those values can all be found in 1Password’s `Shared - GitHub Actions SHR` vault.
 
 ```
 $ scp .zshrc admin@<HOST_IP>

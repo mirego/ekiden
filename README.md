@@ -1,6 +1,11 @@
-# GitHub Actions Self-Hosted ARM64 MacOS Runner
+<div align="center">
+  <strong>Ekiden</strong>
+  <p><br />GitHub Actions self-hosted <code>arm64</code> macOS runners</p>
+</div>
 
-The goal of this project is to have a pool of Mirego hosted runners in addition to the runners provided by GitHub. Those runners are executed inside an ARM64 MacOS machine.
+The goal of this project is to have a pool of [GitHub Actions self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) in addition to the runners provided by GitHub. Those runners are executed inside an `arm64` macOS machine.
+
+It uses [Tart](https://tart.run/) to orchestrate virtual machine image deployments and [Packer](https://www.packer.io/) to provision these images.
 
 ## Configuration
 
@@ -8,8 +13,6 @@ The goal of this project is to have a pool of Mirego hosted runners in addition 
 - To create a new **VM**, follow the [guest configuration guide](guest/README.md)
 - To setup the VM **registry**, follow the [registry configuration guide](registry/README.md)
 - To setup **Grafana** to monitor the machines, follow the [monitoring configuration guide](monitoring/README.md)
-
----
 
 ## Architecture
 
@@ -95,3 +98,13 @@ flowchart LR
     style host fill:#15653a,stroke:#25ba6b
     style registry fill:#834738,stroke:#eb4b39
 ```
+
+## License
+
+Ekiden is © 2022 [Mirego](https://www.mirego.com) and may be freely distributed under the [New BSD license](http://opensource.org/licenses/BSD-3-Clause). See the [`LICENSE.md`](./LICENSE.md) file.
+
+## About Mirego
+
+[Mirego](https://www.mirego.com) is a team of passionate people who believe that work is a place where you can innovate and have fun. We’re a team of [talented people](https://life.mirego.com) who imagine and build beautiful Web and mobile applications. We come together to share ideas and [change the world](http://www.mirego.org).
+
+We also [love open-source software](https://open.mirego.com) and we try to give back to the community as much as we can.
