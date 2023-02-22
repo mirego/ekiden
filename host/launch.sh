@@ -6,7 +6,7 @@ GITHUB_REGISTRATION_ENDPOINT=
 VM_USERNAME=runner
 
 RUNNER_LABELS=self-hosted,M1
-RUNNER_URL=https://github.com/mirego
+RUNNER_URL=
 RUNNER_NAME=Runner
 
 REGISTRY_URL=
@@ -37,7 +37,7 @@ then
   export $(cat .env | xargs)
 fi
 
-# Shutdown message
+# Show a shutdown message when closing the script
 trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
 
 # Unlock keychain (required to store the registry credentials)

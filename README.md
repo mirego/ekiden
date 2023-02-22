@@ -5,9 +5,9 @@
 
 ## Introduction
 
-The goal of this project is to have a pool of [GitHub Actions self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) in addition to the runners provided by GitHub. Those runners are executed inside an `arm64` macOS machine.
+The goal of this project is to have a pool of [GitHub Actions self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) in addition to the runners provided by GitHub. Those runners are executed inside an ephemeral `arm64` macOS machine.
 
-It uses [Tart](https://tart.run/) to orchestrate virtual machine image deployments, [Packer](https://www.packer.io/) to provision these images and [Grafana](https://grafana.com/) to monitor runners.
+This repo is a collection of documentation, scripts and configuration files that can be used to manage those runners. It uses [Tart](https://tart.run/) to orchestrate the virtual machine, [Packer](https://www.packer.io/) to provision these images, [Docker Registry](https://github.com/distribution/distribution) to store the images and [Grafana](https://grafana.com/) to monitor runners.
 
 ## Configuration
 
@@ -16,46 +16,9 @@ It uses [Tart](https://tart.run/) to orchestrate virtual machine image deploymen
 - To setup the VM **registry**, follow the [registry configuration guide](registry/README.md)
 - To setup **Grafana** to monitor the machines, follow the [monitoring configuration guide](monitoring/README.md)
 
-## Architecture
+## How it Works
 
-### High Level Overview
-
-Mirego has a few GitHub Actions runners hosted on premise. The self-hosted runners include tags that can be used to explicitely chosen inside the workflows (`self-hosted`, `ARM64`, `mirego`...).
-
-```mermaid
-flowchart TD
-    subgraph internet [Internet]
-        subgraph spacer [ ]
-            github(GitHub Actions)
-        end
-    end
-
-    subgraph mirego [Mirego Network]
-        subgraph spacer2 [ ]
-            runner1(Mirego Runner 1):::machine<-->github
-            runner2(Mirego Runner 2):::machine<-->github
-        end
-    end
-
-    subgraph internet [Internet]
-        subgraph spacer [ ]
-            githubrunner1(GitHub Runner 1):::machine<-->github
-            githubrunner2(GitHub Runner 2):::machine<-->github
-        end
-    end
-
-    style mirego fill:transparent,stroke:#eb4b39,stroke-dasharray:5
-    style internet fill:transparent,stroke:#4080ec,stroke-dasharray:5
-    style github fill:#1d3a6e,stroke:#4080ec
-    style spacer fill:transparent,stroke:transparent
-    style spacer2 fill:transparent,stroke:transparent
-
-    classDef machine fill:#15653a,stroke:#25ba6b
-```
-
-### Inside a Runner
-
-In order to simplify maintenance and to increase the runner's reliability and the build's repeatability, each runner runs inside an ephemeral virtual machine. This way, whenever a runner picks up a job, the workspace is assured to be in a clean state. This also allows us to install and upgrade tools inside the VM and replicate it to every other machines.
+In order to simplify maintenance and to increase the runner's reliability and the build's repeatability, each runner runs inside an ephemeral virtual machine. This way, whenever a runner picks up a job, the workspace is assured to be in a clean state. Since this is also how the GitHub-hosted runners work, this can simplify interoperability.
 
 A typical run-loop looks like this:
 
@@ -72,13 +35,13 @@ A typical run-loop looks like this:
 
 ```mermaid
 flowchart LR
-    subgraph mirego [Mirego Network]
+    subgraph local [On-Premise Network]
         subgraph spacer [ ]
             subgraph host [Mac OS Runner Host]
                 subgraph spacer2 [ ]
                     script(Launch Script)-->runner(SSH Client)
                     subgraph guest [Mac OS VM]
-                        runner(Runner)<-.->tools(Pre-Installed Tools)
+                        runner(Runner)
                     end
                 end
             end
@@ -92,7 +55,7 @@ flowchart LR
     end
 
 
-    style mirego fill:transparent,stroke:#eb4b39,stroke-dasharray:5
+    style local fill:transparent,stroke:#eb4b39,stroke-dasharray:5
     style internet fill:transparent,stroke:#4080ec,stroke-dasharray:5
     style spacer fill:transparent,stroke:transparent
     style spacer2 fill:transparent,stroke:transparent

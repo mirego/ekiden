@@ -1,5 +1,7 @@
 # Registry Configuration
 
+Tart supports uploading images to an OCI registry. This section describes how to get a minimal registry up and running. 
+
 ## Prerequisite
 
 - Install [Docker](https://www.docker.com/)
@@ -7,7 +9,7 @@
 
 ## Prepare the machine
 
-1. Create a `registry` folder in the user's home
+1. Create a `registry` folder
 2. Copy the `docker-compose.yaml` file in the folder
 3. Create a `certs` sub-folder with the `domain.crt` and `domain.crt` files (see [below](#generate-a-certificate) if you need to generate one)
 4. Create an `auth` sub-folder
