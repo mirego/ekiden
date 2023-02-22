@@ -1,5 +1,5 @@
 <div align="center">
-  <strong>Ekiden</strong>
+  <img alt="Ekiden" src="https://user-images.githubusercontent.com/11348/220660410-57a2869a-c0c7-4f04-a17b-f78ba55e134f.png" width="400" />
   <p><br />GitHub Actions self-hosted <code>arm64</code> macOS runners</p>
 </div>
 
