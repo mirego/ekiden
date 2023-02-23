@@ -1,6 +1,6 @@
 # Registry Configuration
 
-Tart supports uploading images to an OCI registry. This section describes how to get a minimal registry up and running. 
+Tart supports uploading images to an OCI registry. This section describes how to get a minimal registry up and running.
 
 ## Prerequisite
 

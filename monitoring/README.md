@@ -4,6 +4,7 @@ This section describe how to setup a Grafana instance on one of the hosts in ord
 This strategy is a work in progress and does not implement any form of security. **Use at your own risk**
 
 This strategy uses 3 components:
+
 - [Promtail](https://grafana.com/docs/loki/latest/clients/promtail/) to collect the logs from the hosts (installed on every machine).
 - [Loki](https://grafana.com/oss/loki/) to collect the logs on the main host.
 - [Grafana](https://grafana.com/) to create the dashboard.

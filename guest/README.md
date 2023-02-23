@@ -3,6 +3,7 @@
 The templates for this projet were adapted from the [cirruslab templates](https://github.com/cirruslabs/macos-image-templates).
 
 ## Prerequisite
+
 Make sure you have both `tart` and `packer` installed
 
 ```sh
@@ -34,6 +35,7 @@ packer build runner.pkr.hcl
 ```
 
 ## Install the Host's SSH Key
+
 Install the host's public key on the VM. This will allow the host's script to launch commands inside the VM.
 
 ```sh
@@ -54,7 +56,9 @@ sudo xcodebuild -downloadAllPlatforms
 ```
 
 ## Push the image on the container registry
+
 The new image can be pushed to a registry to facilitate the distribution. Follow the [registry configuration guide](registry/README.md) to get one running.
+
 ```
 tart login REGISTRY_URL
 tart push runner REGISTRY_URL/runner:latest
