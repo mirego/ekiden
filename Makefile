@@ -22,9 +22,9 @@ targets:
 .PHONY: lint
 lint: ## Lint files
 	npx prettier --check $(PRETTIER_FILES_PATTERN)
-	shfmt --diff $(SHFMT_FILES_PATTERN)
+	shfmt -d $(SHFMT_FILES_PATTERN)
 
 .PHONY: format
 format: ## Format source files
 	npx prettier --write $(PRETTIER_FILES_PATTERN)
-	shfmt --write $(SHFMT_FILES_PATTERN)
+	shfmt -w $(SHFMT_FILES_PATTERN)
