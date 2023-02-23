@@ -38,8 +38,6 @@ $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
 Still from your local machine, copy a few files from this repository. The `domain.crt` file is the certificate required to access the VM registry. The `.env` contains secrets for the runner (see `.env.example` for a template). An ssh key is also installed on the host to facilitate the connection to the VM.
 
 ```
-$ scp .zshrc admin@<HOST_IP>
-$ scp .vimrc admin@<HOST_IP>
 $ scp domain.crt admin@<HOST_IP>
 $ scp launch.sh admin@<HOST_IP>:vm
 $ scp .env admin@<HOST_IP>:vm

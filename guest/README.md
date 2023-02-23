@@ -4,43 +4,62 @@ The templates for this projet were adapted from the [cirruslab templates](https:
 
 ## Prerequisite
 
-1. Install `tart`
+Make sure you have both `tart` and `packer` installed
 
-- `brew install cirruslabs/cli/tart`
-
-2. Install `packer`
-
-- `brew tap hashicorp/tap`
-- `brew install hashicorp/tap/packer`
+```sh
+$ brew install cirruslabs/cli/tart
+$ brew tap hashicorp/tap
+$ brew install hashicorp/tap/packer
+```
 
 ## Create a base image
 
-1. Run `packer build base.pkr.hcl`
+Run the following to creates a `base` VM in tart that can be used as a starting point for the runner.
 
-- This will download the latest MacOS recovery image and configure a VM from it
-- Available recovery images can be found here: https://ipsw.me/
-- A URL for the image to use can be specified with `packer build base.pkr.hcl -var "ipsw=https://updates.cdn-apple.com/2022FallFCS/fullrestores/012-93802/A7270B0F-05F8-43D1-A9AD-40EF5699E82C/UniversalMac_13.0.1_22A400_Restore.ipsw"`
-- A path for a downloaded recovery image to use can be specified with `packer build base.pkr.hcl -var "ipsw=Downloads/UniversalMac_13.0.1_22A400_Restore.ipsw"`
-- This creates a `base` VM in tart that can be used as is or as a starting point for another VM
+```sh
+$ packer build base.pkr.hcl
+```
+
+By default, this will download the latest MacOS recovery image and configure a VM from it. Alternatively, a URL or a path for the image to use can be specified. Available recovery images can be found here: https://ipsw.me/
+
+```
+$ packer build base.pkr.hcl -var "ipsw=PATH_OR_URL_TO_IPSW"
+```
 
 ## Create a runner image
 
-1. Run `packer build runner.pkr.hcl`
+Run the following to create a clone from `base` VM and configure it with the necessary tools for a runner
 
-- This will create a clone from `base` VM and configure it with the necessary tools for a runner
+```sh
+$ packer build runner.pkr.hcl
+```
 
-2. Install Xcode on the runner
+## Install the Host's SSH Key
 
-- `xcodes install --latest --experimental-unxip --data-source apple`
-- Xcode cannot be installed automatically as it requires a 2FA with an Apple ID
-- Start Xcode to install additionnal runtimes (watchOS, tvOS)
+Install the host's public key on the VM. This will allow the host's script to launch commands inside the VM.
 
-3. Install the host's public key on the VM (can be found in 1Password’s `Shared - GitHub Actions SHR` vault)
+```sh
+$ tart run runner
+$ ssh-copy-id -i SSH_KEY_FILE runner@$(tart ip runner)
+```
 
-- `tart run runner`
-- `ssh-copy-id -i SSH_KEY_FILE runner@$(tart ip runner)`
+## Install Xcode
 
-4. Push the image on the container registry (url and credentials can also be found in 1Password)
+Xcode cannot be installed automatically from the script as it requires a 2FA with an Apple ID. It can be installed with [xcodes](https://github.com/RobotsAndPencils/xcodes) from within the VM.
 
-- `tart login REGISTRY_URL`
-- `tart push runner REGISTRY_URL/runner:latest`
+```sh
+$ xcodes install --latest --experimental-unxip
+$ sudo xcode-select -s "/Applications/$(ls /Applications | grep -m 1 Xcode)"
+$ sudo xcodebuild -license accept
+$ sudo xcodebuild -runFirstLaunch
+$ sudo xcodebuild -downloadAllPlatforms
+```
+
+## Push the image on the container registry
+
+The new image can be pushed to a registry to facilitate the distribution. Follow the [registry configuration guide](registry/README.md) to get one running.
+
+```
+$ tart login REGISTRY_URL
+$ tart push runner REGISTRY_URL/runner:latest
+```

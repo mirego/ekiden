@@ -1,0 +1,441 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_LOKI",
+      "label": "Loki",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "loki",
+      "pluginName": "Loki"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.3.1"
+    },
+    {
+      "type": "panel",
+      "id": "logs",
+      "name": "Logs",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "loki",
+      "name": "Loki",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "state-timeline",
+      "name": "State timeline",
+      "version": ""
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "fillOpacity": 70,
+            "lineWidth": 0,
+            "spanNulls": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "pattern": ".*Creating registration token.*",
+                "result": {
+                  "color": "yellow",
+                  "index": 0,
+                  "text": "Preparing"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Listening for Jobs.*",
+                "result": {
+                  "color": "blue",
+                  "index": 1,
+                  "text": "Ready"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Running job:.*",
+                "result": {
+                  "color": "green",
+                  "index": 2,
+                  "text": "Running"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Job .+ completed with result.*",
+                "result": {
+                  "color": "orange",
+                  "index": 3,
+                  "text": "Clean Up"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Stopping runner script.*",
+                "result": {
+                  "color": "red",
+                  "index": 4,
+                  "text": "Stopped"
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "alignValue": "left",
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "mergeValues": true,
+        "rowHeight": 0.9,
+        "showValue": "auto",
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "editorMode": "builder",
+          "expr": "{filename=\"/logfiles/runner.log\"} |~ `(Creating registration token)|(Listening for Jobs)|(Running job:)|(Job .+ completed with result)|(Stopping runner script)`",
+          "legendFormat": "$machine",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "Status",
+      "transformations": [
+        {
+          "id": "extractFields",
+          "options": {
+            "format": "auto",
+            "source": "labels"
+          }
+        },
+        {
+          "id": "partitionByValues",
+          "options": {
+            "fields": [
+              "machine"
+            ]
+          }
+        },
+        {
+          "id": "joinByField",
+          "options": {
+            "byField": "Time",
+            "mode": "outer"
+          }
+        },
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "pattern": "Time|Line.+"
+            }
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "Line (.*)",
+            "renamePattern": "$1"
+          }
+        }
+      ],
+      "type": "state-timeline"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "pattern": ".*Creating registration token.*",
+                "result": {
+                  "color": "yellow",
+                  "index": 0,
+                  "text": "Preparing"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Listening for Jobs.*",
+                "result": {
+                  "color": "blue",
+                  "index": 1,
+                  "text": "Ready"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Running job:.*",
+                "result": {
+                  "color": "green",
+                  "index": 2,
+                  "text": "Running"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Job .+ completed with result.*",
+                "result": {
+                  "color": "orange",
+                  "index": 3,
+                  "text": "Clean Up"
+                }
+              },
+              "type": "regex"
+            },
+            {
+              "options": {
+                "pattern": ".*Stopping runner script.*",
+                "result": {
+                  "color": "red",
+                  "index": 4,
+                  "text": "Stopped"
+                }
+              },
+              "type": "regex"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "text",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 8,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "maxPerRow": 12,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "firstNotNull"
+          ],
+          "fields": "/^Line$/",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "9.3.1",
+      "repeat": "machine",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "editorMode": "builder",
+          "expr": "{machine=\"$machine\"} |~ `(Creating registration token)|(Listening for Jobs)|(Running job:)|(Job .+ completed with result)|(Stopping runner script)`",
+          "legendFormat": "",
+          "maxLines": 1,
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "$machine",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "loki",
+        "uid": "${DS_LOKI}"
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 11
+      },
+      "id": 2,
+      "maxPerRow": 4,
+      "options": {
+        "dedupStrategy": "none",
+        "enableLogDetails": false,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": true,
+        "sortOrder": "Ascending",
+        "wrapLogMessage": true
+      },
+      "repeat": "machine",
+      "repeatDirection": "h",
+      "targets": [
+        {
+          "datasource": {
+            "type": "loki",
+            "uid": "${DS_LOKI}"
+          },
+          "editorMode": "builder",
+          "expr": "{machine=\"$machine\"} | regexp `.*(?P<content>\\[(HOST|GUEST)\\].*)` | line_format `{{.content}}`",
+          "queryType": "range",
+          "refId": "A"
+        }
+      ],
+      "title": "$machine",
+      "type": "logs"
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 37,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {},
+        "datasource": {
+          "type": "loki",
+          "uid": "${DS_LOKI}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Machine",
+        "multi": false,
+        "name": "machine",
+        "options": [],
+        "query": {
+          "label": "machine",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-3h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Overview",
+  "uid": "QigjUBKVk",
+  "version": 48,
+  "weekStart": ""
+}
