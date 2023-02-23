@@ -14,8 +14,6 @@ REGISTRY_USERNAME=
 REGISTRY_PASSWORD=
 REGISTRY_IMAGE_NAME=runner
 
-KEYCHAIN_PASSWORD=
-
 LOGFILE=runner.log
 
 function log_output {
@@ -38,16 +36,8 @@ fi
 # Show a shutdown message when closing the script
 trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
 
-# Unlock keychain (required to store the registry credentials)
-if [ -n "$KEYCHAIN_PASSWORD" ]; then
-	log_output "[HOST] 🔐 Unlocking the keychain"
-	security unlock-keychain -p "$KEYCHAIN_PASSWORD" ~/Library/Keychains/login.keychain-db
-fi
-
-# Login to the registry
+# Select image
 if [ -n "${REGISTRY_URL}" ]; then
-	log_output "[HOST] 📡 Logging into the VM registry"
-	echo -n "$REGISTRY_PASSWORD" | tart login $REGISTRY_URL --username $REGISTRY_USERNAME --password-stdin
 	REGISTRY_PATH="$REGISTRY_URL/$REGISTRY_IMAGE_NAME"
 else
 	REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
@@ -62,7 +52,7 @@ while :; do
 
 	log_output "[HOST] 💻 Launching macOS VM"
 	INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RUN_ID"
-	tart clone $REGISTRY_PATH $INSTANCE_NAME
+	TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart clone $REGISTRY_PATH $INSTANCE_NAME
 	trap "log_output \"[HOST] 🪓 Killing the VM\"; tart delete $INSTANCE_NAME; log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
 	tart run --no-graphics $INSTANCE_NAME >/dev/null 2>&1 &
 
