@@ -11,7 +11,7 @@ Tart supports uploading images to an OCI registry. This section describes how to
 
 1. Create a `registry` folder
 2. Copy the `docker-compose.yaml` file in the folder
-3. Create a `certs` sub-folder with the `domain.crt` and `domain.crt` files (see [below](#generate-a-certificate) if you need to generate one)
+3. Create a `certs` sub-folder with the `domain.crt` and `domain.key` files (see [below](#generate-a-certificate) if you need to generate one)
 4. Create an `auth` sub-folder
 5. Run `htpasswd -cB auth/registry.password USER` to create a new password file
 
