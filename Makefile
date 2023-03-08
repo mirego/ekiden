@@ -23,6 +23,7 @@ targets:
 lint: ## Lint files
 	npx prettier --check $(PRETTIER_FILES_PATTERN)
 	shfmt -d $(SHFMT_FILES_PATTERN)
+	shellcheck $(SHFMT_FILES_PATTERN)
 
 .PHONY: format
 format: ## Format source files
