@@ -19,5 +19,5 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
-      - run: sudo apt install shfmt
+      - run: sudo apt install shfmt shellcheck
       - run: make lint
