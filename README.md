@@ -37,11 +37,11 @@ A typical run-loop looks like this:
 flowchart LR
     subgraph local [On-Premise Network]
         subgraph spacer [ ]
-            subgraph host [Mac OS Runner Host]
+            subgraph host [macOS Runner Host]
                 subgraph spacer2 [ ]
                     script(Launch Script)-->runner(SSH Client)
-                    subgraph guest [Mac OS VM]
-                        runner(Runner)
+                    subgraph guest [macOS VM]
+                        runner(GitHub Actions Runner)
                     end
                 end
             end
@@ -55,13 +55,15 @@ flowchart LR
     end
 
 
-    style local fill:transparent,stroke:#eb4b39,stroke-dasharray:5
+    style local fill:transparent,stroke:#b38fff,stroke-dasharray:5
     style internet fill:transparent,stroke:#4080ec,stroke-dasharray:5
+    style github fill:#4080ec,color:#ffffff
     style spacer fill:transparent,stroke:transparent
     style spacer2 fill:transparent,stroke:transparent
 
-    style host fill:#15653a,stroke:#25ba6b
-    style registry fill:#834738,stroke:#eb4b39
+    style guest fill:#cfb9ff,stroke:#a57aff
+    style host fill:#ece3ff,stroke:#b38fff
+    style registry fill:#b5ee7c,stroke:#8cb960,color:#70934d
 ```
 
 ## License
