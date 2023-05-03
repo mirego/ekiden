@@ -72,7 +72,7 @@ Install the service and launch it.
 
 ```
 $ sudo chown root:wheel launch.sh
-$ sudo cp com.mirego.ekiden /Library/LaunchDaemons
+$ sudo cp com.mirego.ekiden.plist /Library/LaunchDaemons
 $ sudo launchctl load -w /Library/LaunchDaemons/com.mirego.ekiden.plist
 ```
 
