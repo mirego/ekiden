@@ -40,6 +40,7 @@ Still from your local machine, copy a few files from this repository. The `domai
 ```
 $ scp domain.crt admin@<HOST_IP>
 $ scp launch.sh admin@<HOST_IP>:vm
+$ scp com.mirego.ekiden.plist admin@<HOST_IP>:vm
 $ scp .env admin@<HOST_IP>:vm
 $ scp id_rsa admin@<HOST_IP>:.ssh
 $ scp id_rsa.pub admin@<HOST_IP>:.ssh
@@ -47,11 +48,11 @@ $ scp id_rsa.pub admin@<HOST_IP>:.ssh
 
 ### Install Tools
 
-On the remote machine, install [Homebrew](https://brew.sh), `tmux`, `wget` and [tart](https://github.com/cirruslabs/tart/)
+On the remote machine, install [Homebrew](https://brew.sh), `wget` and [tart](https://github.com/cirruslabs/tart/)
 
 ```
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-$ brew install tmux wget cirruslabs/cli/tart
+$ brew install wget cirruslabs/cli/tart
 ```
 
 ### Install Certificate
@@ -67,12 +68,12 @@ $ security add-trusted-cert -d -k ~/Library/Keychains/login.keychain domain.crt
 
 ### Start the Runner
 
-Start tmux and launch a new runner!
+Install the service and launch it.
 
 ```
-$ tmux
-$ cd vm
-$ ./launch.sh
+$ sudo chown root:wheel launch.sh
+$ sudo cp com.mirego.ekiden /Library/LaunchDaemons
+$ sudo launchctl load -w /Library/LaunchDaemons/com.mirego.ekiden.plist
 ```
 
-You can now detach from tmux with (press `^B`, release and then `d`)
+You can now logout from the server.
