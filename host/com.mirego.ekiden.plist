@@ -17,9 +17,9 @@
     <key>WorkingDirectory</key>
     <string>/Users/admin/vm</string>
     <key>StandardErrorPath</key>
-    <string>/Users/admin/vm/stderr.log</string>
+    <string>/Users/admin/vm/stderr</string>
     <key>StandardOutPath</key>
-    <string>/Users/admin/vm/stdout.log</string>
+    <string>/Users/admin/vm/stdout</string>
     <key>RunAtLoad</key>
     <true/>
   </dict>
