@@ -11,6 +11,7 @@ Use `admin` as the username for the initial user
 - General → Sharing → enable **Screen Sharing**
 - General → Sharing → enable **Remote Login**
 - General → Sharing → edit **Hostname** (`gh-shr-XX`)
+- General → About → edit **Name** (`gh-shr-XX`)
 - Displays → Advanced… → Energy → enable **Prevent automatic sleeping when display is off**
 
 <table>
