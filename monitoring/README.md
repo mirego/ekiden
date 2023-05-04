@@ -19,7 +19,24 @@ $ colima start
 ## Configuration
 
 - Download the _monitoring_ folder from this repo to the machine.
+
+  ```
+  $ scp -r monitoring admin@<HOST_IP>:grafana
+  ```
+
 - Replace the HOST_URL and the MACHINE_NAME in promtail's configuration files.
 - Replace the HOST_URL in the `docker-compose.yaml`
-- Launch all components with `docker compose up -d`
+
+## Start the Containers
+
+On the remote machine, install the service and launch it.
+
+```
+$ sudo chown root:wheel launch.sh
+$ sudo cp com.mirego.ekiden-monitoring.plist /Library/LaunchDaemons
+$ sudo launchctl load -w /Library/LaunchDaemons/com.mirego.ekiden-monitoring.plist
+```
+
+## Post-Launch Configuration
+
 - _Optionally_ import the pre-built dashboard in the _grafana_ folder

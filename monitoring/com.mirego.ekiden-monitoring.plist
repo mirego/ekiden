@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>Label</key>
+    <string>com.mirego.ekiden-monitoring</string>
+    <key>LaunchOnlyOnce</key>
+    <true/>
+    <key>ProgramArguments</key>
+    <array>
+      <string>sh</string>
+      <string>-c</string>
+      <string>/Users/admin/grafana/launch.sh</string>
+    </array>
+    <key>UserName</key>
+    <string>admin</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/admin/grafana</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/admin/grafana/stderr</string>
+    <key>StandardOutPath</key>
+    <string>/Users/admin/grafana/stdout</string>
+    <key>RunAtLoad</key>
+    <true/>
+  </dict>
+</plist>
