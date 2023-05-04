@@ -11,7 +11,10 @@ This strategy uses 3 components:
 
 ## Prerequisites
 
-- Install [Docker](https://www.docker.com/)
+```
+$ brew install colima docker docker-compose
+$ colima start
+```
 
 ## Configuration
 
