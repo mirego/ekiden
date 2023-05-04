@@ -33,6 +33,9 @@ if [ -f .env ]; then
 	export $(xargs <.env)
 fi
 
+# Configure Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Show a shutdown message when closing the script
 trap "log_output \"[HOST] 🚦 Stopping runner script\"; exit 1" SIGINT
 
