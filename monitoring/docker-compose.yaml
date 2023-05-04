@@ -9,7 +9,7 @@ services:
       - ./grafana/:/var/lib/grafana
     environment:
       GF_SERVER_ROOT_URL: http://HOST_URL:3000
-  
+
   loki:
     image: grafana/loki:2.6.1
     ports:
