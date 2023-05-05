@@ -13,6 +13,15 @@ read -p "New tag: " TAG_NEW
 
 CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
 HEADER=$(echo "${USERNAME}:${PASSWORD}" | base64)
-TOKEN=$(curl -H "Authorization: Basic ${HEADER}" "${REGISTRY_NAME}/v2/token?service=container_registry&scope=*" | jq -r '.token') || { echo 'Failed to get token' ; exit 1; }
-MANIFEST=$(curl -H "Accept: ${CONTENT_TYPE}" -H "Authorization: Bearer ${TOKEN}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${TAG_OLD}") || { echo 'Failed to get manifest' ; exit 1; }
-curl -X PUT -H "Content-Type: ${CONTENT_TYPE}" -H "Authorization: Bearer ${TOKEN}" -d "${MANIFEST}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${TAG_NEW}" || { echo 'Failed to create tag' ; exit 1; }
+TOKEN=$(curl -H "Authorization: Basic ${HEADER}" "${REGISTRY_NAME}/v2/token?service=container_registry&scope=*" | jq -r '.token') || {
+	echo 'Failed to get token'
+	exit 1
+}
+MANIFEST=$(curl -H "Accept: ${CONTENT_TYPE}" -H "Authorization: Bearer ${TOKEN}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${TAG_OLD}") || {
+	echo 'Failed to get manifest'
+	exit 1
+}
+curl -X PUT -H "Content-Type: ${CONTENT_TYPE}" -H "Authorization: Bearer ${TOKEN}" -d "${MANIFEST}" "${REGISTRY_NAME}/v2/${REPOSITORY}/manifests/${TAG_NEW}" || {
+	echo 'Failed to create tag'
+	exit 1
+}
