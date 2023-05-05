@@ -8,8 +8,8 @@ PASSWORD=password
 
 TAG_OLD=latest
 TAG_NEW=latest
-read -p "Old tag: " TAG_OLD
-read -p "New tag: " TAG_NEW
+read -pr "Old tag: " TAG_OLD
+read -pr "New tag: " TAG_NEW
 
 CONTENT_TYPE="application/vnd.docker.distribution.manifest.v2+json"
 HEADER=$(echo "${USERNAME}:${PASSWORD}" | base64)
