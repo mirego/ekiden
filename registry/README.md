@@ -1,24 +1,25 @@
 # Registry Configuration
 
-Tart supports uploading images to an OCI registry. This section describes how to get a minimal registry up and running.
+Tart supports uploading images to an OCI registry. This section describes how to setup Gitea as a container registry.
 
 ## Prerequisite
 
-- Install [Docker](https://www.docker.com/)
-- Install `htpasswd` (preinstalled on MacOS)
+```
+$ brew install colima docker
+$ colima start
+```
 
 ## Prepare the machine
 
 1. Create a `registry` folder
 2. Copy the `docker-compose.yaml` file in the folder
 3. Create a `certs` sub-folder with the `domain.crt` and `domain.key` files (see [below](#generate-a-certificate) if you need to generate one)
-4. Create an `auth` sub-folder
-5. Run `htpasswd -cB auth/registry.password USER` to create a new password file
+4. Create a `data` sub-folder
 
 ## Run the registry
 
 1. From the `registry` folder, run `docker compose up -d`
-2. Additionnal users can be added with `htpasswd -B auth/registry.password USER`
+2. Follow the instructions on the Gitea interface
 
 ## Generate a certificate
 
