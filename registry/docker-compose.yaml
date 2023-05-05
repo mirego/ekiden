@@ -1,17 +1,41 @@
+version: "3"
+
+networks:
+  gitea:
+    external: false
+
+volumes:
+  gitea:
+    driver: local
+
 services:
-  registry:
+  server:
+    image: gitea/gitea:1.19
+    container_name: gitea
     restart: always
-    image: registry:2
-    ports:
-      - 443:443
-    environment:
-      REGISTRY_AUTH: htpasswd
-      REGISTRY_AUTH_HTPASSWD_REALM: realm
-      REGISTRY_HTTP_ADDR: 0.0.0.0:443
-      REGISTRY_AUTH_HTPASSWD_PATH: /auth/registry.password
-      REGISTRY_HTTP_TLS_CERTIFICATE: /certs/domain.crt
-      REGISTRY_HTTP_TLS_KEY: /certs/domain.key
+    networks:
+      - gitea
     volumes:
-      - ./data:/var/lib/registry
-      - ./auth:/auth
+      - ./data:/data
       - ./certs:/certs
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "443:3000"
+    environment:
+      - GITEA__server__PROTOCOL=https
+      - GITEA__server__ROOT_URL=https://10.1.3.132/
+      - GITEA__server__HTTP_PORT=3000
+      - GITEA__server__CERT_FILE=/certs/domain.crt
+      - GITEA__server__KEY_FILE=/certs/domain.key
+      - GITEA__server__DISABLE_SSH=true
+      - GITEA__admin__DISABLE_REGULAR_ORG_CREATION=true
+      - GITEA__repository__DISABLED_REPO_UNITS=repo.issues,repo.ext_issues,repo.pulls,repo.wiki,repo.ext_wiki,repo.projects
+      - GITEA__repository__DISABLE_HTTP_GIT=true
+      - GITEA__repository__DISABLE_MIGRATIONS=true
+      - GITEA__repository__DISABLE_STARS=true
+      - GITEA__security__DISABLE_WEBHOOKS=true
+      - GITEA__service__DISABLE_REGISTRATION=true
+      - GITEA__service.explore__DISABLE_USERS_PAGE=true
+      - USER_UID=501
+      - USER_GID=20

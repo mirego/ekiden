@@ -7,7 +7,7 @@
 
 The goal of this project is to have a pool of [GitHub Actions self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners) in addition to the runners provided by GitHub. Those runners are executed inside an ephemeral `arm64` macOS machine.
 
-This repo is a collection of documentation, scripts and configuration files that can be used to manage those runners. It uses [Tart](https://tart.run/) to orchestrate the virtual machine, [Packer](https://www.packer.io/) to provision these images, [Docker Registry](https://github.com/distribution/distribution) to store the images and [Grafana](https://grafana.com/) to monitor runners.
+This repo is a collection of documentation, scripts and configuration files that can be used to manage those runners. It uses [Tart](https://tart.run/) to orchestrate the virtual machine, [Packer](https://www.packer.io/) to provision these images, [Gitea](https://gitea.io/) to store the images and [Grafana](https://grafana.com/) to monitor runners.
 
 ## Configuration
 

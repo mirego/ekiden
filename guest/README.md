@@ -14,9 +14,10 @@ $ brew install hashicorp/tap/packer
 
 ## Create a base image
 
-Run the following to creates a `base` VM in tart that can be used as a starting point for the runner.
+Run the following to creates a `base` VM in tart that can be used as a starting point for the runner. The script should then complete the macOS setup on its own.
 
 ```sh
+$ packer init base.pkr.hcl
 $ packer build base.pkr.hcl
 ```
 
