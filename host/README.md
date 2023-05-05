@@ -13,14 +13,17 @@ Use `admin` as the username for the initial user
 - General → Sharing → edit **Hostname** (`gh-shr-XX`)
 - General → About → edit **Name** (`gh-shr-XX`)
 - Displays → Advanced… → Energy → enable **Prevent automatic sleeping when display is off**
+- Energy Saver → enable **Start up automatically after a power failure**
 
 <table>
   <tr>
     <th>Sharing
     <th>Displays
+    <th>Energy Saver
   <tr>
     <td><img width="300" alt="" src="https://user-images.githubusercontent.com/11348/213275950-7e9976dc-f2b4-456f-a915-fcda26af6afc.png">
     <td><img width="300" alt="" src="https://user-images.githubusercontent.com/11348/213275979-c53d5c69-2028-4277-aef3-3af502dcdba6.png">
+    <td><img width="300" alt="" src="https://user-images.githubusercontent.com/11348/236463635-bbfb2c79-5494-4937-8ba7-c622754e358a.png">
 </table>
 
 ## CLI
