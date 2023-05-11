@@ -5,7 +5,7 @@ Tart supports uploading images to an OCI registry. This section describes how to
 ## Prerequisite
 
 ```
-$ brew install colima docker
+$ brew install colima docker docker-compose
 $ colima start
 ```
 
@@ -18,7 +18,7 @@ $ colima start
 
 ## Run the registry
 
-1. From the `registry` folder, run `docker compose up -d`
+1. From the `registry` folder, run `docker-compose up -d`
 2. Follow the instructions on the Gitea interface
 
 ## Generate a certificate
