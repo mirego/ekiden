@@ -43,7 +43,7 @@ function cleanup {
 
 function pull_image {
 	log_output "[HOST] ⬇️ Downloading from remote registry"
-	TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH"
+	TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
 }
 
 function run_loop {
@@ -54,7 +54,7 @@ function run_loop {
 
 	log_output "[HOST] 💻 Launching macOS VM"
 	INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RUN_ID"
-	tart clone "$REGISTRY_PATH" "$INSTANCE_NAME"
+	TART_NO_AUTO_PRUNE="" tart clone "$REGISTRY_PATH" "$INSTANCE_NAME"
 	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; cleanup' SIGINT SIGTERM
 	tart run --no-graphics $INSTANCE_NAME >/dev/null 2>&1 &
 
