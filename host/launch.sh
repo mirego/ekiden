@@ -55,7 +55,7 @@ function run_loop {
 	log_output "[HOST] 💻 Launching macOS VM"
 	INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RUN_ID"
 	tart clone $REGISTRY_PATH $INSTANCE_NAME
-	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; shutdown' SIGINT SIGTERM
+	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; cleanup' SIGINT SIGTERM
 	tart run --no-graphics $INSTANCE_NAME >/dev/null 2>&1 &
 
 	log_output "[HOST] 💤 Waiting for VM to boot"
@@ -96,7 +96,8 @@ trap cleanup SIGINT SIGTERM
 while :; do
 	reload_env
 
-	if [[ "${SCHEDULE_SHUTDOWN,,}" == "true" ]]; then
+	if [[ "$SCHEDULE_SHUTDOWN" == "true" ]]; then
+		log_output "[HOST] ⏰ Scheduled for shutdown"
 		cleanup
 	fi
 
