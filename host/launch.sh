@@ -16,6 +16,8 @@ REGISTRY_IMAGE_NAME=runner
 
 LOGFILE=runner.log
 
+SCHEDULE_SHUTDOWN=false
+
 function log_output {
 	echo "$(date "+%Y/%m/%d %H:%M:%S") $1"
 	echo "$(date "+%Y/%m/%d %H:%M:%S") [${RUN_ID:-PREPARING}] $1" >>$LOGFILE
@@ -93,6 +95,10 @@ trap cleanup SIGINT SIGTERM
 # Main loop
 while :; do
 	reload_env
+
+	if [[ "${SCHEDULE_SHUTDOWN,,}" == "true" ]]; then
+		cleanup
+	fi
 
 	# Select image
 	if [ -n "${REGISTRY_URL}" ]; then
