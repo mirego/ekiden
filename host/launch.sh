@@ -71,10 +71,10 @@ function run_loop {
 	done
 
 	log_output "[HOST] 🔨 Configuring runner on VM"
-	ssh -q "$VM_USERNAME@$IP_ADDRESS" "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" >/dev/null
+	ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" >/dev/null
 
 	log_output "[HOST] 🏃 Starting runner on VM"
-	ssh -q "$VM_USERNAME@$IP_ADDRESS" "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
+	ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
 
 	log_output "[HOST] ✋ Stop the VM"
 	tart stop "$INSTANCE_NAME"
