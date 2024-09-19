@@ -3,19 +3,17 @@
 GITHUB_API_TOKEN=
 GITHUB_REGISTRATION_ENDPOINT=
 
-VM_USERNAME=runner
+VM_USERNAME="admin"
+VM_PASSWORD="admin"
 
-RUNNER_LABELS=self-hosted,M1
+RUNNER_LABELS="self-hosted,M1"
 RUNNER_URL=
-RUNNER_NAME=Runner
+RUNNER_NAME="Runner"
 
 REGISTRY_URL=
-REGISTRY_USERNAME=
-REGISTRY_PASSWORD=
-REGISTRY_IMAGE_NAME=runner
+REGISTRY_IMAGE_NAME="runner"
 
-LOGFILE=runner.log
-
+LOGFILE="runner.log"
 SCHEDULE_SHUTDOWN=false
 
 function log_output {
@@ -43,7 +41,7 @@ function cleanup {
 
 function pull_image {
 	log_output "[HOST] ⬇️ Downloading from remote registry"
-	TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
+	tart pull "$REGISTRY_PATH" --concurrency 1
 }
 
 function run_loop {
@@ -66,15 +64,15 @@ function run_loop {
 	done
 
 	log_output "[HOST] 💤 Waiting for SSH to be available on VM"
-	until [ "$(ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no -oBatchMode=yes "$VM_USERNAME@$IP_ADDRESS" pwd)" ]; do
+	until [ "$(SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" pwd)" ]; do
 		sleep 1
 	done
 
 	log_output "[HOST] 🔨 Configuring runner on VM"
-	ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" >/dev/null
+	SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" >/dev/null
 
 	log_output "[HOST] 🏃 Starting runner on VM"
-	ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
+	SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
 
 	log_output "[HOST] ✋ Stop the VM"
 	tart stop "$INSTANCE_NAME"
