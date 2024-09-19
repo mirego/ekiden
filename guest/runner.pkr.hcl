@@ -76,8 +76,8 @@ build {
   provisioner "shell" {
     inline = [
       "source ~/.zprofile",
-      "brew install --cask homebrew/cask-versions/temurin8",
-      "brew install android-sdk android-ndk",
+      "brew install --cask temurin",
+      "brew install android-commandlinetools android-ndk",
       "echo \"export ANDROID_HOME=/opt/homebrew/share/android-sdk\" >> ~/.zprofile",
       "echo \"export ANDROID_SDK_ROOT=/opt/homebrew/share/android-sdk\" >> ~/.zprofile",
       "echo \"export ANDROID_NDK_HOME=/opt/homebrew/share/android-ndk\" >> ~/.zprofile",
