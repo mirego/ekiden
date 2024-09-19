@@ -39,35 +39,21 @@ $ ssh-copy-id -i ~/.ssh/id_rsa.pub admin@<HOST_IP>
 
 ### Copy Files
 
-Still from your local machine, copy a few files from this repository. The `domain.crt` file is the certificate required to access the VM registry. The `.env` contains secrets for the runner (see `.env.example` for a template). An ssh key is also installed on the host to facilitate the connection to the VM.
+Still from your local machine, copy a few files from this repository. The `.env` contains configurations for the runner (see `.env.example` for a template).
 
 ```
-$ scp domain.crt admin@<HOST_IP>
 $ scp launch.sh admin@<HOST_IP>:vm
 $ scp com.mirego.ekiden.plist admin@<HOST_IP>:vm
 $ scp .env admin@<HOST_IP>:vm
-$ scp id_rsa admin@<HOST_IP>:.ssh
-$ scp id_rsa.pub admin@<HOST_IP>:.ssh
 ```
 
 ### Install Tools
 
-On the remote machine, install [Homebrew](https://brew.sh), `wget` and [tart](https://github.com/cirruslabs/tart/)
+On the remote machine, install [Homebrew](https://brew.sh), `wget`, `sshpass` and [tart](https://github.com/cirruslabs/tart/)
 
 ```
 $ /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-$ brew install wget cirruslabs/cli/tart
-```
-
-### Install Certificate
-
-Open the certificate in the keychain and make sure it is marked as "Always Trust".
-Alternatively, this can also be done from command line:
-
-```
-$ sudo security authorizationdb write com.apple.trust-settings.admin allow
-$ security unlock-keychain ~/Library/Keychains/login.keychain-db
-$ security add-trusted-cert -d -k ~/Library/Keychains/login.keychain domain.crt
+$ brew install wget cirruslabs/cli/tart cirruslabs/cli/sshpass
 ```
 
 ### Start the Runner
