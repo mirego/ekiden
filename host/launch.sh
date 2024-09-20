@@ -17,10 +17,10 @@ LOGFILE="runner.log"
 SCHEDULE_SHUTDOWN=false
 
 function log_output {
-	local IS_ENABLED="${1:-true}"
-	[ "$IS_ENABLED" != "true" ] && return
-	echo "$(date "+%Y/%m/%d %H:%M:%S") $1"
-	echo "$(date "+%Y/%m/%d %H:%M:%S") [${RUN_ID:-PREPARING}] $1" >>$LOGFILE
+	if [ -z "$2" ] || [ "$2" = "true" ]; then
+		echo "$(date "+%Y/%m/%d %H:%M:%S") $1"
+		echo "$(date "+%Y/%m/%d %H:%M:%S") [${RUN_ID:-PREPARING}] $1" >>$LOGFILE
+	fi
 }
 
 function stream_output {
@@ -43,9 +43,9 @@ function cleanup {
 
 function ssh_command() {
 	local command=$1
-	local show_output=${2:-true}
+	local show_output=$2
 
-	if [ "$show_output" == "true" ]; then
+	if [ -z "${show_output}" ] || [ "${show_output}" = "true" ]; then
 		SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "$command" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
 	else
 		SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "$command" >/dev/null
@@ -110,7 +110,7 @@ function run_loop {
 	boot_vm "$REGISTRY_PATH" "$INSTANCE_NAME"
 
 	log_output "[HOST] 🔨 Configuring runner on VM"
-	ssh_command "$VM_USERNAME@$IP_ADDRESS" "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" false
+	ssh_command "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" false
 
 	log_output "[HOST] 🏃 Starting runner on VM"
 	ssh_command "source ~/.zprofile && ./actions-runner/run.sh"
