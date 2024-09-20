@@ -77,7 +77,11 @@ function boot_vm {
 
 function pull_image {
 	log_output "[HOST] ⬇️ Downloading from remote registry"
-	tart pull "$REGISTRY_PATH" --concurrency 1
+	if [ -z "$REGISTRY_USERNAME" ]; then
+		tart pull "$REGISTRY_PATH" --concurrency 1
+	else
+		TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
+	fi
 
 	# The images from cirruslabs are too small for some builds
 	# This step allows to resize the disk by truncating the disk file and booting the VM to resize the partition
