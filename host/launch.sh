@@ -90,12 +90,17 @@ function pull_image {
 		REGISTRY_DISK_PATH="${REGISTRY_PATH//://}"
 		truncate -s "$TRUNCATE_SIZE" ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/disk.img
 
+		log_output "[HOST] 📊 Booting instance"
 		local INSTANCE_NAME="truncate_instance"
 		boot_vm "$REGISTRY_PATH" "$INSTANCE_NAME" false
 
+		log_output "[HOST] 📊 Repairing disk"
 		ssh_command "echo y | diskutil repairDisk disk0"
+
+		log_output "[HOST] 📊 Resizing partition"
 		ssh_command "diskutil apfs resizeContainer disk0s2 0"
 
+		log_output "[HOST] 📊 Stoping instance"
 		tart stop $INSTANCE_NAME
 		rm ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/disk.img
 		cp -c ~/.tart/vms/"$INSTANCE_NAME"/disk.img ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/
