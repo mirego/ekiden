@@ -3,24 +3,24 @@
 GITHUB_API_TOKEN=
 GITHUB_REGISTRATION_ENDPOINT=
 
-VM_USERNAME=runner
+VM_USERNAME="admin"
+VM_PASSWORD="admin"
 
-RUNNER_LABELS=self-hosted,M1
+RUNNER_LABELS="self-hosted,M1"
 RUNNER_URL=
-RUNNER_NAME=Runner
+RUNNER_NAME="Runner"
 
 REGISTRY_URL=
-REGISTRY_USERNAME=
-REGISTRY_PASSWORD=
-REGISTRY_IMAGE_NAME=runner
+REGISTRY_IMAGE_NAME="runner"
 
-LOGFILE=runner.log
-
+LOGFILE="runner.log"
 SCHEDULE_SHUTDOWN=false
 
 function log_output {
-	echo "$(date "+%Y/%m/%d %H:%M:%S") $1"
-	echo "$(date "+%Y/%m/%d %H:%M:%S") [${RUN_ID:-PREPARING}] $1" >>$LOGFILE
+	if [ -z "$2" ] || [ "$2" = "true" ]; then
+		echo "$(date "+%Y/%m/%d %H:%M:%S") $1"
+		echo "$(date "+%Y/%m/%d %H:%M:%S") [${RUN_ID:-PREPARING}] $1" >>$LOGFILE
+	fi
 }
 
 function stream_output {
@@ -41,9 +41,71 @@ function cleanup {
 	exit 0
 }
 
+function ssh_command() {
+	local command=$1
+	local show_output=$2
+
+	if [ -z "${show_output}" ] || [ "${show_output}" = "true" ]; then
+		SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "$command" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
+	else
+		SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "$command" >/dev/null
+	fi
+}
+
+function boot_vm {
+	BASE_IMAGE=$1
+	INSTANCE_NAME=$2
+	ENABLE_LOGGING=$3
+
+	TART_NO_AUTO_PRUNE="" tart clone "$BASE_IMAGE" "$INSTANCE_NAME"
+	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; cleanup' SIGINT SIGTERM
+
+	tart run --no-graphics "$INSTANCE_NAME" >/dev/null 2>&1 &
+
+	log_output "[HOST] 💤 Waiting for VM to boot" "$ENABLE_LOGGING"
+	IP_ADDRESS=$(tart ip "$INSTANCE_NAME")
+	until [[ "$IP_ADDRESS" =~ ^([0-9]+\.){3}[0-9]+$ ]]; do
+		IP_ADDRESS=$(tart ip "$INSTANCE_NAME")
+		sleep 1
+	done
+
+	log_output "[HOST] 💤 Waiting for SSH to be available on VM" "$ENABLE_LOGGING"
+	until [ "$(SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" pwd)" ]; do
+		sleep 1
+	done
+}
+
 function pull_image {
 	log_output "[HOST] ⬇️ Downloading from remote registry"
-	TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
+	if [ -z "$REGISTRY_USERNAME" ]; then
+		tart pull "$REGISTRY_PATH" --concurrency 1
+	else
+		TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
+	fi
+
+	# The images from cirruslabs are too small for some builds
+	# This step allows to resize the disk by truncating the disk file and booting the VM to resize the partition
+	if [ -n "${TRUNCATE_SIZE}" ]; then
+		log_output "[HOST] 📊 Resizing the disk to $TRUNCATE_SIZE"
+		REGISTRY_DISK_PATH="${REGISTRY_PATH//://}"
+		truncate -s "$TRUNCATE_SIZE" ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/disk.img
+
+		log_output "[HOST] 📊 Booting instance"
+		local INSTANCE_NAME="truncate_instance"
+		boot_vm "$REGISTRY_PATH" "$INSTANCE_NAME" false
+
+		log_output "[HOST] 📊 Repairing disk"
+		ssh_command "echo y | diskutil repairDisk disk0"
+
+		log_output "[HOST] 📊 Resizing partition"
+		ssh_command "diskutil apfs resizeContainer disk0s2 0"
+
+		log_output "[HOST] 📊 Stoping instance"
+		tart stop $INSTANCE_NAME
+		rm ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/disk.img
+		cp -c ~/.tart/vms/"$INSTANCE_NAME"/disk.img ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/
+		tart delete $INSTANCE_NAME
+	fi
 }
 
 function run_loop {
@@ -54,27 +116,13 @@ function run_loop {
 
 	log_output "[HOST] 💻 Launching macOS VM"
 	INSTANCE_NAME=runner_"$RUNNER_NAME"_"$RUN_ID"
-	TART_NO_AUTO_PRUNE="" tart clone "$REGISTRY_PATH" "$INSTANCE_NAME"
-	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; cleanup' SIGINT SIGTERM
-	tart run --no-graphics $INSTANCE_NAME >/dev/null 2>&1 &
-
-	log_output "[HOST] 💤 Waiting for VM to boot"
-	IP_ADDRESS=$(tart ip $INSTANCE_NAME)
-	until [[ "$IP_ADDRESS" =~ ^([0-9]+\.){3}[0-9]+$ ]]; do
-		IP_ADDRESS=$(tart ip $INSTANCE_NAME)
-		sleep 1
-	done
-
-	log_output "[HOST] 💤 Waiting for SSH to be available on VM"
-	until [ "$(ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no -oBatchMode=yes "$VM_USERNAME@$IP_ADDRESS" pwd)" ]; do
-		sleep 1
-	done
+	boot_vm "$REGISTRY_PATH" "$INSTANCE_NAME"
 
 	log_output "[HOST] 🔨 Configuring runner on VM"
-	ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" >/dev/null
+	ssh_command "./actions-runner/config.sh --url $RUNNER_URL --token $REGISTRATION_TOKEN --ephemeral --name $RUNNER_NAME --labels $RUNNER_LABELS --unattended --replace" false
 
 	log_output "[HOST] 🏃 Starting runner on VM"
-	ssh -q -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" "source ~/.zprofile && ./actions-runner/run.sh" 2>&1 | sed -nru 's/^(.+)$/[GUEST] 📀 \1/p' | stream_output
+	ssh_command "source ~/.zprofile && ./actions-runner/run.sh"
 
 	log_output "[HOST] ✋ Stop the VM"
 	tart stop "$INSTANCE_NAME"
