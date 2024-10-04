@@ -75,20 +75,12 @@ function boot_vm {
 	done
 }
 
-function pull_image {
-	log_output "[HOST] ⬇️ Downloading from remote registry"
-	if [ -z "$REGISTRY_USERNAME" ]; then
-		tart pull "$REGISTRY_PATH" --concurrency 1
-	else
-		TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
-	fi
-
+function resize_cached_image {
 	# The images from cirruslabs are too small for some builds
 	# This step allows to resize the disk by truncating the disk file and booting the VM to resize the partition
 	if [ -n "${TRUNCATE_SIZE}" ]; then
-		log_output "[HOST] 📊 Resizing the disk to $TRUNCATE_SIZE"
-		REGISTRY_DISK_PATH="${REGISTRY_PATH//://}"
-		truncate -s "$TRUNCATE_SIZE" ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/disk.img
+		log_output "[HOST] 📊 Resizing the disk at path '$REGISTRY_DISK_PATH' to $TRUNCATE_SIZE"
+		truncate -s "$TRUNCATE_SIZE" "$REGISTRY_DISK_PATH/disk.img"
 
 		log_output "[HOST] 📊 Booting instance"
 		local INSTANCE_NAME="truncate_instance"
@@ -102,10 +94,21 @@ function pull_image {
 
 		log_output "[HOST] 📊 Stoping instance"
 		tart stop $INSTANCE_NAME
-		rm ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/disk.img
-		cp -c ~/.tart/vms/"$INSTANCE_NAME"/disk.img ~/.tart/cache/OCIs/"$REGISTRY_DISK_PATH"/
+		rm "$REGISTRY_DISK_PATH/disk.img"
+		cp -c ~/.tart/vms/"$INSTANCE_NAME"/disk.img "$REGISTRY_DISK_PATH/"
 		tart delete $INSTANCE_NAME
 	fi
+}
+
+function pull_image {
+	log_output "[HOST] ⬇️ Downloading from remote registry"
+	if [ -z "$REGISTRY_USERNAME" ]; then
+		tart pull "$REGISTRY_PATH" --concurrency 1
+	else
+		TART_REGISTRY_USERNAME=$REGISTRY_USERNAME TART_REGISTRY_PASSWORD=$REGISTRY_PASSWORD tart pull "$REGISTRY_PATH" --concurrency 1
+	fi
+
+	resize_cached_image
 }
 
 function run_loop {
@@ -152,13 +155,13 @@ while :; do
 	# Select image
 	if [ -n "${REGISTRY_URL}" ]; then
 		REGISTRY_PATH="$REGISTRY_URL/$REGISTRY_IMAGE_NAME"
+		REGISTRY_DISK_PATH="$HOME/.tart/cache/OCIs/${REGISTRY_PATH//://}"
 	else
 		REGISTRY_PATH="$REGISTRY_IMAGE_NAME"
 	fi
 
-	if tart list | grep $REGISTRY_PATH; then
-		run_loop
-	else
+	# Pull image if not cached
+	if ! tart list | grep $REGISTRY_PATH; then
 		log_output "[HOST] 🔎 Target image not found"
 		if [ -n "${REGISTRY_URL}" ]; then
 			pull_image
@@ -166,4 +169,6 @@ while :; do
 			cleanup
 		fi
 	fi
+
+	run_loop
 done
