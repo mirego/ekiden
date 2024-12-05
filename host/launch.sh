@@ -101,6 +101,9 @@ function resize_cached_image {
 }
 
 function pull_image {
+	log_output "[HOST] 🗑️ Removing all old images"
+	rm -rf ~/.tart
+
 	log_output "[HOST] ⬇️ Downloading from remote registry"
 	if [ -z "$REGISTRY_USERNAME" ]; then
 		tart pull "$REGISTRY_PATH" --concurrency 1
