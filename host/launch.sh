@@ -69,6 +69,9 @@ function boot_vm {
 		sleep 1
 	done
 
+	# Clean old SSH host key reference for the VM to avoid conflicts
+	ssh-keygen -R "$IP_ADDRESS" >/dev/null
+
 	log_output "[HOST] 💤 Waiting for SSH to be available on VM" "$ENABLE_LOGGING"
 	until [ "$(SSHPASS=$VM_PASSWORD sshpass -e ssh -q -o ConnectTimeout=1 -o StrictHostKeyChecking=no "$VM_USERNAME@$IP_ADDRESS" pwd)" ]; do
 		sleep 1
