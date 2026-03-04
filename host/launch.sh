@@ -60,6 +60,8 @@ function boot_vm {
 	TART_NO_AUTO_PRUNE="" tart clone "$BASE_IMAGE" "$INSTANCE_NAME"
 	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; cleanup' SIGINT SIGTERM
 
+	tart set "$INSTANCE_NAME" --memory "${VM_RAM:-8192}"
+
 	tart run --no-graphics "$INSTANCE_NAME" >/dev/null 2>&1 &
 
 	log_output "[HOST] 💤 Waiting for VM to boot" "$ENABLE_LOGGING"
