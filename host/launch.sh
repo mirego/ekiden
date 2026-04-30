@@ -61,6 +61,7 @@ function boot_vm {
 	trap 'log_output "[HOST] 🪓 Killing the VM"; tart delete $INSTANCE_NAME; cleanup' SIGINT SIGTERM
 
 	tart set "$INSTANCE_NAME" --memory "${VM_RAM:-8192}"
+	tart set "$INSTANCE_NAME" --cpu "${VM_CPU:-4}"
 
 	tart run --no-graphics "$INSTANCE_NAME" >/dev/null 2>&1 &
 
